@@ -71,7 +71,7 @@ export default function Header() {
                 src="/images/acf-logo.png"
                 alt="Africa Childcare Forum"
                 className={`w-auto object-contain transition-all duration-300 ease-in-out ${
-                  scrolled ? "h-12 sm:h-10" : "h-16 sm:h-12"
+                  scrolled ? "h-12 sm:h-10" : "h-16 sm:h-20"
                 }`}
               />
             </Link>

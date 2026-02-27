@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
+
 export default function HomePage() {
   return (
     <main className="bg-white">
@@ -144,49 +146,88 @@ export default function HomePage() {
       {/* Pre Conference Section */}
       <section id="preconference" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Intro */}
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
-              Before the Main Event
+              Preparing for the Forum
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">
-              Pre-Conference Activities
+              Pre-Conference Engagements
             </h2>
             <p className="mt-4 text-gray-600 text-lg">
-              Engage with focused workshops, networking sessions, and preparatory
-              discussions designed to maximize your experience at ACFMombasa2026.
-              These activities help participants explore key childcare challenges and
-              innovative solutions before the main forum.
+              In the lead-up to ACFMombasa2026, country partners and stakeholders across
+              Africa are encouraged to convene dialogues, workshops, and learning spaces
+              that surface local childcare priorities and strengthen preparation for the Forum.
             </p>
           </div>
 
-          {/* Pre-Conference Cards */}
+          {/* Key Engagement Types */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Card 1 */}
+            {/* Dialogues */}
             <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Orientation Workshops</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                National & Sub-National Dialogues
+              </h3>
               <p className="text-gray-600">
-                Hands-on sessions to prepare participants for in-depth discussions at
-                the forum. Learn practical tools and approaches to improve childcare.
+                Country-led conversations bringing together policymakers, practitioners,
+                caregivers, and partners to discuss childcare priorities, gaps, and opportunities
+                within local contexts.
               </p>
             </div>
 
-            {/* Card 2 */}
+            {/* Workshops */}
             <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Networking Events</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Workshops & Training Sessions
+              </h3>
               <p className="text-gray-600">
-                Connect with fellow caregivers, policymakers, NGOs, and global
-                partners to share insights, experiences, and build meaningful
-                collaborations.
+                Skill-building and capacity-strengthening sessions focused on childcare
+                workforce development, policy implementation, and service delivery improvement.
               </p>
             </div>
 
-            {/* Card 3 */}
+            {/* Roundtables */}
             <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Focus Group Discussions</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Roundtables & Learning Exchanges
+              </h3>
               <p className="text-gray-600">
-                Small, interactive sessions on pressing childcare topics. Engage with
-                experts and peers to co-create solutions before the main forum.
+                Intimate, interactive spaces for sharing evidence, innovations, and best practices,
+                while exploring collaborative solutions to shared childcare challenges.
               </p>
+            </div>
+          </div>
+
+          {/* Direction to More Info */}
+          <div className="mt-16 max-w-4xl mx-auto text-center">
+            <p className="text-gray-700 text-lg">
+              Pre-conference activities also include flagship conferences curated by{" "}
+              <span className="font-semibold">
+                CAC
+              </span>{" "}
+              in partnership with{" "}
+              <span className="font-semibold">
+                Uthabiti Africa
+              </span>
+              , as well as webinar preparatory sessions designed to align participants
+              with the Forum’s themes and outcomes.
+            </p>
+
+            <p className="mt-4 text-gray-600">
+              Detailed information on flagship conferences, webinar schedules, participation
+              requirements, and how to host a country-led pre-conference event is available
+              on the Conference Details page.
+            </p>
+
+            {/* CTA */}
+            <div className="mt-8">
+              <a
+                href="/conference-details"
+                className="inline-flex items-center gap-2 bg-[#E5553C] text-white font-semibold px-8 py-4 rounded-lg shadow hover:bg-[#cc4a35] transition"
+              >
+                Explore Pre-Conference Details
+                <span aria-hidden>→</span>
+              </a>
             </div>
           </div>
         </div>
@@ -326,37 +367,154 @@ export default function HomePage() {
       {/* Our Sponsors Section */}
       <section id="sponsors" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Intro */}
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
-              Our Valued Partner
+              Call for Sponsors
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">
-              Sponsors
+              Partner with Africa Childcare Forum 2026
             </h2>
-            <p className="mt-4 text-gray-600 text-lg">
-              We are proud to be convened by Collaborative Action for Childcare, 
-              whose commitment to quality and inclusive childcare across Africa 
-              makes ACFMombasa2026 possible.
+            <p className="mt-6 text-gray-600 text-lg">
+              Join us as a sponsor of ACFMombasa2026 and play a pivotal role in shaping the
+              future of childcare across Africa. This premier Forum brings together
+              policymakers, childcare professionals, thought leaders, and advocates to
+              advance innovation, share best practices, and drive actionable solutions.
             </p>
           </div>
 
-          {/* Sponsor Card */}
-          <div className="flex justify-center">
+          {/* Why Sponsor */}
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            <div className="border rounded-2xl p-6 hover:shadow-lg transition">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Amplify Your Impact
+              </h3>
+              <p className="text-gray-600">
+                Gain prominent visibility and position your organization as a leader in
+                advancing the childcare agenda across Africa.
+              </p>
+            </div>
+
+            <div className="border rounded-2xl p-6 hover:shadow-lg transition">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Engage Decision-Makers
+              </h3>
+              <p className="text-gray-600">
+                Connect directly with government officials, donors, industry leaders, and
+                influential stakeholders shaping childcare systems.
+              </p>
+            </div>
+
+            <div className="border rounded-2xl p-6 hover:shadow-lg transition">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Support a Transformative Cause
+              </h3>
+              <p className="text-gray-600">
+                Align your brand with a high-impact initiative dedicated to equitable,
+                inclusive, and sustainable childcare solutions.
+              </p>
+            </div>
+          </div>
+
+          {/* Sponsorship Benefits */}
+          <div className="max-w-5xl mx-auto mb-20">
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">
+              Sponsorship Benefits
+            </h3>
+
+            <div className="grid sm:grid-cols-2 gap-8">
+              <div className="bg-[#FFF4F0] rounded-xl p-6">
+                <p className="font-semibold text-gray-900">Brand Exposure</p>
+                <p className="text-gray-600 mt-1">
+                  Logo placement across event materials, banners, programs, and the official
+                  Africa Childcare Forum website.
+                </p>
+              </div>
+
+              <div className="bg-[#FFF4F0] rounded-xl p-6">
+                <p className="font-semibold text-gray-900">Speaking Opportunities</p>
+                <p className="text-gray-600 mt-1">
+                  Share your expertise by hosting or contributing to sessions and panel
+                  discussions.
+                </p>
+              </div>
+
+              <div className="bg-[#FFF4F0] rounded-xl p-6">
+                <p className="font-semibold text-gray-900">Exclusive Networking</p>
+                <p className="text-gray-600 mt-1">
+                  Access curated networking spaces with childcare experts and decision-makers.
+                </p>
+              </div>
+
+              <div className="bg-[#FFF4F0] rounded-xl p-6">
+                <p className="font-semibold text-gray-900">Recognition</p>
+                <p className="text-gray-600 mt-1">
+                  Public acknowledgment of your sponsorship during the Forum and official
+                  communications.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sponsorship Packages */}
+          <div className="text-center mb-20">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              Sponsorship Opportunities
+            </h3>
+            <p className="text-gray-600 mb-8">
+              We offer flexible sponsorship packages designed to align with your goals and
+              impact priorities.
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              {["Platinum Sponsor", "Gold Sponsor", "Silver Sponsor", "Event Partner"].map(
+                (tier) => (
+                  <span
+                    key={tier}
+                    className="border border-[#E5553C] text-[#E5553C] font-semibold px-6 py-3 rounded-full"
+                  >
+                    {tier}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+
+          {/* Convener Acknowledgment */}
+          <div className="flex flex-col items-center gap-6">
+            <p className="text-gray-700 text-center max-w-2xl">
+              ACFMombasa2026 is convened by{" "}
+              <span className="font-semibold">
+                Uthabiti Africa
+              </span>
+              , whose commitment to advancing quality, affordable, and inclusive childcare
+              across Africa continues to drive this continental movement.
+            </p>
+
             <a
               href="https://cac.uthabitiafrica.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition transform hover:scale-105"
+              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition transform hover:scale-105"
             >
               <img
                 src="/images/cac-logos.png"
                 alt="Collaborative Action for Childcare"
-                className="h-32 w-auto mx-auto object-contain"
+                className="h-28 w-auto object-contain mx-auto"
               />
-              <p className="mt-4 text-center text-gray-700 font-medium">
+              <p className="mt-3 text-center text-gray-700 font-medium">
                 Learn more about our convening partner
               </p>
+            </a>
+          </div>
+
+          {/* CTA */}
+          <div className="mt-16 text-center">
+            <a
+              href="/contact"
+              className="inline-flex items-center gap-2 bg-[#E5553C] text-white font-semibold px-10 py-4 rounded-lg shadow hover:bg-[#cc4a35] transition"
+            >
+              Become a Sponsor
+              <span aria-hidden>→</span>
             </a>
           </div>
         </div>
@@ -365,59 +523,69 @@ export default function HomePage() {
       {/* Sessions Section */}
       <section id="sessions" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Intro */}
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
-              Key Forum Activities
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+              Forum Programme
+            </p>
+            <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-gray-900">
               Forum Sessions
             </h2>
-            <p className="mt-4 text-gray-600 text-lg">
-              ACFMombasa2026 offers a variety of engaging sessions designed to
-              share knowledge, build skills, and foster collaboration among childcare
-              professionals, caregivers, policymakers, and global partners.
+            <p className="mt-5 text-lg text-gray-600">
+              Under the theme <strong>“Uniting for Care: Africa’s Call to the World”</strong>,
+              ACFMombasa2026 convenes diverse voices to advance childcare and the broader
+              care economy across Africa.
             </p>
           </div>
 
-          {/* Session Cards */}
+          {/* Session Categories */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Card 1 */}
-            <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Inspiring Keynotes</h3>
-              <p className="text-gray-600">
-                Hear from world-renowned experts and leaders in childcare and
-                education, sharing insights and strategies for impactful change.
-              </p>
-            </div>
-
-            {/* Card 2 */}
-            <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Interactive Workshops</h3>
-              <p className="text-gray-600">
-                Participate in hands-on sessions designed to equip you with practical
-                tools and techniques for effective childcare solutions.
-              </p>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Networking Opportunities</h3>
-              <p className="text-gray-600">
-                Connect with like-minded professionals and organizations committed
-                to advancing childcare initiatives across Africa.
-              </p>
-            </div>
-
-            {/* Card 4 */}
-            <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">High-Level Paper Presentations</h3>
-              <p className="text-gray-600">
-                Share groundbreaking research and policy insights that inform
-                childcare strategies, strengthen systems, and inspire action across Africa.
-              </p>
-            </div>
+            {[
+              {
+                title: "Keynotes & Panels",
+                text: "High-level conversations with African and global leaders shaping childcare systems."
+              },
+              {
+                title: "Interactive Workshops",
+                text: "Practical, skills-focused sessions designed for applied learning."
+              },
+              {
+                title: "Research & Policy Dialogues",
+                text: "Evidence-based discussions informing reform and system strengthening."
+              },
+              {
+                title: "Innovation & Clinics",
+                text: "Showcasing scalable, African-led childcare and care economy solutions."
+              }
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="border border-gray-200 rounded-2xl p-6 hover:shadow-sm transition"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {item.text}
+                </p>
+              </div>
+            ))}
           </div>
+
+          {/* Dates + CTA */}
+          <div className="mt-20 text-center border-t pt-12">
+            <p className="text-gray-600 mb-6">
+              📍 PrideInn Paradise, Mombasa · 📅 15–18 September 2026
+            </p>
+
+            <a
+              href="/sessions"
+              className="inline-flex items-center gap-2 text-gray-900 font-semibold hover:underline"
+            >
+              View session guidelines & submit a proposal
+              <span aria-hidden>→</span>
+            </a>
+          </div>
+
         </div>
       </section>
 
@@ -475,79 +643,47 @@ export default function HomePage() {
 
       {/* Exhibitions Section */}
       <section id="exhibitions" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Intro */}
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
-                Explore Innovations
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">
-                Exhibitions
-              </h2>
-              <p className="mt-4 text-gray-600 text-lg">
-                Discover innovative products, services, and solutions transforming the
-                childcare and education landscape across Africa. Engage with exhibitors,
-                learn about best practices, and explore new opportunities for collaboration.
-              </p>
-            </div>
-
-            {/* Exhibition Cards */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Card 1 */}
-              <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Childcare Technology</h3>
-                <p className="text-gray-600">
-                  Innovative digital solutions, apps, and tools to improve childcare
-                  management and learning experiences for children and caregivers.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Educational Products</h3>
-                <p className="text-gray-600">
-                  Exhibiting high-quality educational materials, toys, and learning
-                  resources that support early childhood development.
-                </p>
-              </div>
-
-              {/* Card 3 */}
-              <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Care & Support Services</h3>
-                <p className="text-gray-600">
-                  Organizations providing innovative childcare services, community
-                  support, and inclusive programs for families and caregivers.
-                </p>
-              </div>
-
-              {/* Card 4 */}
-              <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">NGO Initiatives</h3>
-                <p className="text-gray-600">
-                  Showcasing impactful programs and projects by NGOs that advance
-                  childcare justice, equity, and quality across the continent.
-                </p>
-              </div>
-
-              {/* Card 5 */}
-              <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Policy & Research</h3>
-                <p className="text-gray-600">
-                  Learn about evidence-based research, policy frameworks, and
-                  innovations shaping childcare systems across Africa and beyond.
-                </p>
-              </div>
-
-              {/* Card 6 */}
-              <div className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Community Projects</h3>
-                <p className="text-gray-600">
-                  Explore locally-led initiatives and community-based programs
-                  improving childcare access, inclusion, and quality.
-                </p>
-              </div>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
+              Explore Innovations
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">
+              Exhibitions
+            </h2>
+            <p className="mt-4 text-gray-600 text-lg">
+              Discover innovative products, services, and solutions transforming the childcare and education landscape across Africa.
+              Engage with exhibitors and explore new opportunities for collaboration.
+            </p>
           </div>
+
+          {/* Exhibition Cards */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { title: "Childcare Technology", text: "Innovative digital solutions, apps, and tools to improve childcare management and learning experiences." },
+              { title: "Educational Products", text: "High-quality educational materials, toys, and learning resources supporting early childhood development." },
+              { title: "Care & Support Services", text: "Organizations providing inclusive programs, community support, and innovative childcare services." },
+              { title: "NGO Initiatives", text: "Showcasing impactful NGO programs advancing childcare justice and equity." },
+              { title: "Policy & Research", text: "Evidence-based research, policy frameworks, and innovations shaping childcare systems." },
+              { title: "Community Projects", text: "Locally-led initiatives improving childcare access, inclusion, and quality." },
+            ].map((item, i) => (
+              <div key={i} className="bg-[#FFF4F0] rounded-2xl p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-600">{item.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <a
+              href="/exhibitions-details"
+              className="inline-flex items-center gap-2 bg-[#E5553C] text-white font-semibold py-4 px-8 rounded-lg hover:bg-[#cf4b35] transition"
+            >
+              Learn More & Reserve Your Spot
+              <ArrowRight size={18} />
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Register Section */}

@@ -49,7 +49,7 @@ export default function ACFKigali2025Page() {
             <div className="mt-8 flex flex-wrap gap-6 text-gray-700">
               <div className="flex items-center gap-2">
                 <Calendar className="text-[#E5553C]" />
-                <span>2025</span>
+                <span>15 Dec 2025</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="text-[#E5553C]" />
