@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum RegistrationPhase {
+  EarlyBird
+  Regular
+  LateOnsite
+}
+
+enum RegistrationType {
+  student
+  eastAfrica
+  other
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model participant_registration_tbl {
+  participant_id          BigInt   @id @default(autoincrement())
+  full_name               String
+  email                   String
+  phone                   String
+  organization            String
+  country                 String
+  profession              String
+  other_profession        String?
+  visa_info               String? 
+  phase                   RegistrationPhase
+  type                    RegistrationType
+  other_accessibility     String? 
+  required_translation    String? 
+  other_dietary_restrictions String?
+  media_consent           String
+  report_consent          String
+  emergency_contact       String?
+  paid                    Boolean  @default(false)
+  payment_reference       String?
+
+  accessibility       registration_accessibility_tbl[]
+  dietary             registration_dietary_tbl[]
+  payments                payment_tbl[]
+
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([email])
+  @@index([phase])
+  @@index([type])
+  @@index([payment_reference])
+}
+
+model registration_accessibility_tbl {
+  accessibility_id              BigInt   @id @default(autoincrement())
+  participant_id                BigInt
+  value                         String
+
+  registration    participant_registration_tbl @relation(fields: [participant_id], references: [participant_id], onDelete: Cascade)
+
+  @@index([participant_id])
+}
+
+model registration_dietary_tbl {
+  dietary_id              BigInt   @id @default(autoincrement())
+  participant_id          BigInt
+  value                   String
+
+  registration    participant_registration_tbl @relation(fields: [participant_id], references: [participant_id], onDelete: Cascade)
+
+  @@index([participant_id])
+}
+
+model payment_tbl {
+  payment_id              BigInt   @id @default(autoincrement())
+  participant_id          BigInt
+  amount                  Float
+  currency                String   @default("USD")
+  method                  String
+  status                  PaymentStatus
+  payment_reference       String
+
+  registrations           participant_registration_tbl @relation(fields: [participant_id], references: [participant_id])
+
+  paidAt                  DateTime?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([participant_id])
+  @@index([status])
+  @@index([payment_reference])
+}
+
+model NewsletterSubscriber {
+  email_id           BigInt   @id @default(autoincrement())
+  email              String   @unique
+  isSubscribed       Boolean  @default(true)
+  unsubscribeToken   String @unique
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([email])
+}

@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import Script from "next/script";
+
 import ClientRootLayout from "./ClientRootLayout";
 
 const geistSans = Geist({
@@ -21,6 +23,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://js.paystack.co/v1/inline.js"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientRootLayout>{children}</ClientRootLayout>
       </body>

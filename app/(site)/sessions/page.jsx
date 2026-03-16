@@ -1,173 +1,392 @@
 "use client";
 
-import { Calendar, MapPin, Users, ArrowRight } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Mic,
+  Lightbulb,
+  Handshake,
+  Globe,
+  Briefcase,
+  ArrowRight
+} from "lucide-react";
 
 export default function SessionsPage() {
+
+  const themes = [
+    "Investing in Childcare as Economic Infrastructure",
+    "Strengthening Early Childhood Development Systems",
+    "Professionalizing the Childcare Workforce",
+    "Climate Change and Resilient Childcare Systems",
+    "Private Sector Engagement in Childcare",
+    "Community-Led Childcare Innovations",
+    "Childcare Solutions for Informal Workers",
+    "Financing Sustainable Childcare Systems",
+    "Inclusive Childcare Systems"
+  ];
+
+  const whoShouldSubmit = [
+    "Civil society organizations",
+    "Research institutions and universities",
+    "Government agencies",
+    "International development organizations",
+    "Private sector partners",
+    "Social enterprises and innovators",
+    "Community-based organizations"
+  ];
+
+  const proposalRequirements = [
+    "Session title",
+    "Session format (panel, workshop, dialogue, showcase)",
+    "Brief description of the session (150–250 words)",
+    "Key objectives and expected outcomes",
+    "Proposed speakers or facilitators",
+    "Organization(s) leading the session"
+  ];
+
+  const selectionCriteria = [
+    "Relevance to the forum theme",
+    "Innovation and practical insights",
+    "Diversity of speakers and perspectives",
+    "Potential impact on childcare systems in Africa",
+    "Opportunities for participant engagement"
+  ];
+
+  const benefits = [
+    "Visibility at a major continental forum",
+    "Lead a knowledge-sharing session with sector leaders",
+    "Networking with policymakers, donors, and experts",
+    "Share successful childcare models and innovations"
+  ];
+
   return (
     <main className="bg-white">
 
-      <section className="pt-32 pb-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="max-w-3xl">
-            <span className="inline-block mb-4 text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
-              Forum Programme
-            </span>
+      {/* HERO */}
+      <section
+        className="relative h-[420px] flex items-center justify-center text-center text-white"
+        style={{
+          backgroundImage: "url('/images/session1.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
 
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900">
-              Forum Sessions
-            </h1>
+        <div className="relative max-w-4xl px-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+            Call for Session Proposals
+          </h1>
 
-            <p className="mt-6 text-lg text-gray-600">
-              ACFMombasa2026 offers a series of engaging sessions to share knowledge,
-              build skills, and foster collaboration among childcare professionals,
-              caregivers, policymakers, and global partners.
-            </p>
-          </div>
+          <p className="text-lg text-gray-200">
+            Africa Childcare Forum 2026 • Mombasa, Kenya
+          </p>
         </div>
       </section>
 
-      {/* Session Overview */}
-      <section className="py-20 border-b">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              About the Sessions
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Participants can engage in interactive workshops, panel discussions, innovation clinics, 
-              and networking sessions designed to promote African-led solutions and actionable childcare strategies.
-            </p>
-            <p className="text-gray-600">
-              Sessions focus on evidence-informed approaches, policy reforms, global collaboration, 
-              and showcasing African innovation in childcare and the broader care economy.
-            </p>
 
-            <div className="mt-8 flex flex-wrap gap-6 text-gray-700">
-              <div className="flex items-center gap-2">
-                <Calendar className="text-[#E5553C]" />
-                <span>15–18 September 2026</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="text-[#E5553C]" />
-                <span>PrideInn Paradise, Mombasa, Kenya</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="text-[#E5553C]" />
-                <span>Policymakers, NGOs, Academics, Innovators</span>
-              </div>
-            </div>
-          </div>
+      {/* INTRO */}
+      <section className="py-24">
+        <div className="max-w-5xl mx-auto px-6 text-center">
 
-          {/* Image */}
-          <div className="flex justify-center">
-            <img
-              src="/images/ACF92-b.jpg"
-              alt="ACFMombasa2026 Sessions"
-              className="rounded-2xl shadow-lg w-full max-w-md object-cover"
-            />
-          </div>
+          <p className="text-lg text-gray-600 leading-relaxed">
+            The Africa Childcare Forum 2026 invites organizations,
+            researchers, practitioners, and institutions working in
+            childcare, Early Childhood Development (ECD), gender equality,
+            the care economy, and social development to submit session
+            proposals for the upcoming forum.
+          </p>
+
+          <p className="text-gray-600 mt-6 leading-relaxed">
+            Selected sessions will form part of the official programme
+            and will bring together leaders, policymakers, practitioners,
+            and partners committed to strengthening childcare services
+            and support systems for families and communities across Africa.
+          </p>
+
         </div>
       </section>
 
-      {/* Session Categories */}
+
+      {/* TIMELINE */}
       <section className="py-20 bg-[#FFF4F0]">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Session Types
+
+        <div className="max-w-4xl mx-auto px-6 text-center">
+
+          <h2 className="text-3xl font-bold text-gray-900 mb-12">
+            Session Proposal Timeline
           </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                title: "Inspiring Keynotes",
-                text: "Hear from world-renowned experts and leaders sharing insights and strategies for impactful change."
-              },
-              {
-                title: "Interactive Workshops",
-                text: "Hands-on sessions equipping participants with practical tools and techniques for effective childcare solutions."
-              },
-              {
-                title: "Networking Opportunities",
-                text: "Connect with like-minded professionals and organizations advancing childcare initiatives across Africa."
-              },
-              {
-                title: "High-Level Paper Presentations",
-                text: "Showcasing research and policy insights that inform strategies and strengthen systems."
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition transform hover:-translate-y-1"
-              >
-                <h3 className="font-semibold text-lg text-gray-900 mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{item.text}</p>
-              </div>
-            ))}
+          <div className="grid md:grid-cols-2 gap-8">
+
+            <div className="bg-white p-8 rounded-xl shadow">
+              <Calendar className="text-[#E5553C] mb-3 mx-auto" size={28}/>
+              <h3 className="font-semibold text-lg">
+                Submission Deadline
+              </h3>
+              <p className="text-gray-600 mt-2">
+                30 May 2026
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow">
+              <Calendar className="text-[#E5553C] mb-3 mx-auto" size={28}/>
+              <h3 className="font-semibold text-lg">
+                Selection Notification
+              </h3>
+              <p className="text-gray-600 mt-2">
+                30 June 2026
+              </p>
+            </div>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* Submission Guidelines */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+
+      {/* WHO SHOULD SUBMIT */}
+      <section className="py-24">
+
+        <div className="max-w-6xl mx-auto px-6">
+
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Who Should Submit
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {whoShouldSubmit.map((item,i)=>(
+              <div
+                key={i}
+                className="border rounded-lg p-5 flex items-center gap-3"
+              >
+                <Users className="text-[#E5553C]" size={18}/>
+                {item}
+              </div>
+            ))}
+
+          </div>
+
+          <p className="text-center text-gray-600 mt-8">
+            Collaborative proposals involving multiple organizations
+            or cross-sector partnerships are strongly encouraged.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      {/* SESSION FORMATS */}
+      <section className="py-24 bg-[#FFF4F0]">
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-16">
+            Types of Sessions
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            {[
+              {
+                icon: Handshake,
+                title: "Partner-Led Sessions",
+                text: "Organizations share programmes, research findings and policy insights."
+              },
+              {
+                icon: Briefcase,
+                title: "Interactive Workshops",
+                text: "Hands-on learning sessions sharing tools and models for childcare services."
+              },
+              {
+                icon: Globe,
+                title: "Learning Exchanges",
+                text: "Discussions where practitioners and policymakers exchange lessons."
+              },
+              {
+                icon: Lightbulb,
+                title: "Innovation Showcases",
+                text: "Presentations highlighting new approaches and technologies."
+              }
+            ].map((item,i)=>{
+              const Icon = item.icon;
+
+              return(
+                <div
+                  key={i}
+                  className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition"
+                >
+                  <Icon className="text-[#E5553C] mb-4" size={28}/>
+                  <h3 className="font-bold mb-2">{item.title}</h3>
+                  <p className="text-gray-600 text-sm">{item.text}</p>
+                </div>
+              )
+            })}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* SESSION THEMES */}
+      <section className="py-24">
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          <h2 className="text-3xl font-bold text-center mb-16">
+            Session Themes
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {themes.map((theme,i)=>(
+              <div
+                key={i}
+                className="border rounded-xl p-6 hover:shadow-md transition"
+              >
+                <Lightbulb className="text-[#E5553C] mb-3"/>
+                {theme}
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* PROPOSAL REQUIREMENTS */}
+      <section className="py-24 bg-[#FFF4F0]">
+
+        <div className="max-w-6xl mx-auto px-6">
+
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Proposal Requirements
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6">
+
+            {proposalRequirements.map((item,i)=>(
+              <div key={i} className="flex gap-3">
+                <Lightbulb className="text-[#E5553C]" size={18}/>
+                {item}
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* SELECTION CRITERIA */}
+      <section className="py-24">
+
+        <div className="max-w-5xl mx-auto px-6 text-center">
+
+          <h2 className="text-3xl font-bold mb-12">
+            Selection Criteria
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6 text-left">
+
+            {selectionCriteria.map((item,i)=>(
+              <div
+                key={i}
+                className="border rounded-lg p-5"
+              >
+                {item}
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* BENEFITS */}
+      <section className="py-24 bg-[#FFF4F0]">
+
+        <div className="max-w-6xl mx-auto px-6 text-center">
+
+          <h2 className="text-3xl font-bold mb-12">
+            What Selected Partners Receive
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            {benefits.map((item,i)=>(
+              <div
+                key={i}
+                className="bg-white p-6 rounded-xl shadow"
+              >
+                {item}
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* SUBMISSION OPTIONS */}
+      <section className="py-24">
+
+        <div className="max-w-6xl mx-auto px-6 text-center">
+
+          <h2 className="text-3xl font-bold mb-4">
             Submit Your Session Proposal
           </h2>
 
-          <p className="text-gray-600 mb-6">
-            Organizations and initiatives are invited to submit proposals for sessions before, during, or after ACFMombasa2026.
-            This is an opportunity to showcase innovations, share research, and influence Africa-led solutions in childcare and care systems.
+          <p className="text-gray-600 mb-12">
+            Deadline: <strong>30 May 2026</strong>
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8 text-gray-700">
-            {[
-              {
-                icon: "",
-                title: "Proposal Length",
-                text: "300–500 words outlining objectives, format, expected outcomes, and participating organizations."
-              },
-              {
-                icon: "",
-                title: "Session Duration",
-                text: "Typically 60–90 minutes to allow for meaningful engagement."
-              },
-              {
-                icon: "",
-                title: "Integration",
-                text: "Selected sessions will be integrated into pre-conference, conference, or post-conference program."
-              },
-              {
-                icon: "",
-                title: "Timeline",
-                text: "Submit by 30 May 2025. Selection notification by 30 June 2025."
-              },
-            ].map((item, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl p-6">
-                <h3 className="font-semibold text-gray-900 text-lg mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.text}</p>
-              </div>
-            ))}
+          <div className="grid md:grid-cols-2 gap-8">
+
+            <div className="border rounded-2xl p-8">
+              <h3 className="font-semibold text-lg mb-4">
+                Submit via Email
+              </h3>
+
+              <a
+                href="mailto:ACF@uthabitiafrica.org"
+                className="inline-flex items-center gap-2 bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#cf4b35]"
+              >
+                Submit by Email
+              </a>
+            </div>
+
+            <div className="border rounded-2xl p-8">
+              <h3 className="font-semibold text-lg mb-4">
+                Submit via Online Form
+              </h3>
+
+              <a
+                href="/sessions/submit"
+                className="inline-flex items-center gap-2 border px-6 py-3 rounded-lg font-semibold hover:bg-gray-50"
+              >
+                Open Submission Form
+                <ArrowRight size={18}/>
+              </a>
+            </div>
+
           </div>
 
-          <div className="mt-12 text-center">
-            <a
-              href="mailto:cac@uthabitiafrica.org"
-              className="inline-flex items-center gap-2 bg-[#E5553C] text-white font-semibold py-4 px-8 rounded-lg hover:bg-[#cf4b35] transition"
-            >
-              Submit via Email
-              <ArrowRight size={18} />
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 ml-4 border border-gray-300 text-gray-800 font-semibold py-4 px-8 rounded-lg hover:bg-gray-50 transition"
-            >
-              Online Submission Form
-              <ArrowRight size={18} />
-            </a>
-          </div>
         </div>
+
       </section>
 
     </main>

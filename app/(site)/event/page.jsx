@@ -1,145 +1,235 @@
 "use client";
 
-import { Calendar, MapPin, Users, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { Calendar, MapPin, Users, Globe, Mic, ArrowRight } from "lucide-react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 export default function ACFKigali2025Page() {
+
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  const images = [
+    "/images/kigali-forum/forum1.jpg",
+    "/images/kigali-forum/forum2.jpg",
+    "/images/kigali-forum/forum3.jpg",
+    "/images/kigali-forum/forum4.jpg",
+    "/images/kigali-forum/forum5.jpg",
+    "/images/kigali-forum/forum6.jpg",
+    "/images/kigali-forum/forum7.jpg",
+    "/images/kigali-forum/forum8.jpg",
+    "/images/kigali-forum/forum9.jpg",
+  ];
+
   return (
     <main className="bg-white">
-      {/* Page Header */}
-      <section className="pt-32 pb-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-            <div className="max-w-3xl">
-            <span className="inline-block mb-4 text-sm font-semibold tracking-wide text-[#E5553C] uppercase">
-                Past Convening
-            </span>
 
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900">
-                ACF Kigali 2025
-            </h1>
+      <section
+        className="relative h-[70vh] flex items-center"
+        style={{
+          backgroundImage: "url('/images/kigali-forum/kigali-hero.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
 
-            <p className="mt-6 text-lg text-gray-600">
-                Building momentum for childcare justice — reflecting on Africa’s first
-                continental convening on care.
-            </p>
+        <div className="absolute inset-0 bg-black/50" />
+
+        <div className="relative max-w-7xl mx-auto px-6 text-white">
+
+          <span className="text-sm font-semibold tracking-wide uppercase text-[#FFB4A6]">
+            Previous Forum
+          </span>
+
+          <h1 className="text-4xl sm:text-5xl font-extrabold mt-3">
+            Africa Childcare Forum Kigali 2025
+          </h1>
+
+          <p className="mt-6 max-w-2xl text-lg text-gray-200">
+            Africa’s first continental convening dedicated to advancing
+            childcare as essential social infrastructure.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-6 text-sm text-gray-200">
+
+            <div className="flex items-center gap-2">
+              <Calendar />
+              15 December 2025
             </div>
+
+            <div className="flex items-center gap-2">
+              <MapPin />
+              Kigali, Rwanda
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Users />
+              450 Participants
+            </div>
+
+          </div>
+
         </div>
       </section>
 
-      {/* Overview */}
       <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              About ACF Kigali 2025
-            </h2>
+        <div className="max-w-6xl mx-auto px-4 text-center">
 
-            <p className="text-gray-600 mb-6">
-              The Africa Childcare Forum Kigali 2025 marked a historic milestone as
-              the first continental platform dedicated to advancing childcare as
-              essential social infrastructure in Africa.
-            </p>
-
-            <p className="text-gray-600">
-              Convening policymakers, practitioners, caregivers, researchers, and
-              global partners, ACFKigali2025 created an honest space for dialogue,
-              learning, and collaboration—centering lived experiences and elevating
-              African-led solutions.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-6 text-gray-700">
-              <div className="flex items-center gap-2">
-                <Calendar className="text-[#E5553C]" />
-                <span>15 Dec 2025</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="text-[#E5553C]" />
-                <span>Kigali, Rwanda</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="text-[#E5553C]" />
-                <span>Continental & Global Participants</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Image */}
-          <div className="flex justify-center">
-            <img
-              src="/images/mission-image.jpg"
-              alt="ACF Kigali 2025"
-              className="rounded-2xl shadow-lg w-full max-w-md object-cover"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Key Outcomes */}
-      <section className="bg-[#FFF4F0] py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Key Outcomes & Impact
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            About the Forum
           </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <p className="text-gray-600 max-w-3xl mx-auto">
+            The Africa Childcare Forum Kigali 2025 marked a historic milestone
+            as the first continental platform focused on advancing childcare
+            systems in Africa. The Forum convened policymakers, practitioners,
+            caregivers, researchers, and global partners to exchange knowledge,
+            strengthen partnerships, and elevate African-led childcare solutions.
+          </p>
+
+        </div>
+      </section>
+
+      {/* STATISTICS */}
+      <section className="bg-[#FFF4F0] py-20">
+        <div className="max-w-7xl mx-auto px-4">
+
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Forum at a Glance
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            <div className="bg-white p-8 rounded-xl text-center shadow">
+              <Users className="mx-auto text-[#E5553C] mb-4" size={36}/>
+              <p className="text-4xl font-bold">450+</p>
+              <p className="text-gray-600">Participants</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl text-center shadow">
+              <Globe className="mx-auto text-[#E5553C] mb-4" size={36}/>
+              <p className="text-4xl font-bold">30+</p>
+              <p className="text-gray-600">Countries Represented</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl text-center shadow">
+              <Mic className="mx-auto text-[#E5553C] mb-4" size={36}/>
+              <p className="text-4xl font-bold">70+</p>
+              <p className="text-gray-600">Speakers</p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* REAL GALLERY */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4">
+
+          <h2 className="text-3xl font-bold text-center mb-14">
+            Forum Gallery
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-6">
+
+            {images.map((src, i) => (
+              <div
+                key={i}
+                className="overflow-hidden rounded-xl cursor-pointer group"
+                onClick={() => {
+                  setIndex(i);
+                  setOpen(true);
+                }}
+              >
+                <img
+                  src={src}
+                  className="w-full h-72 object-cover transition duration-500 group-hover:scale-110"
+                  alt="Forum"
+                />
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+        {/* LIGHTBOX */}
+        <Lightbox
+          open={open}
+          close={() => setOpen(false)}
+          index={index}
+          slides={images.map((src) => ({ src }))}
+        />
+      </section>
+
+
+      {/* KEY OUTCOMES */}
+      <section className="bg-[#FFF4F0] py-20">
+        <div className="max-w-7xl mx-auto px-4">
+
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Key Outcomes
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
             {[
               {
-                title: "Elevated Local Voices",
-                text:
-                  "Caregivers, informal workers, and community leaders were centered as experts in shaping childcare solutions.",
+                title: "Elevating Local Voices",
+                text: "Caregivers and community leaders shaped childcare solutions.",
               },
               {
                 title: "Policy Momentum",
-                text:
-                  "Strengthened regional dialogue on positioning childcare as essential social infrastructure.",
+                text: "Strengthened regional dialogue on childcare systems.",
               },
               {
-                title: "African Innovation",
-                text:
-                  "Showcased community-led and scalable childcare models reflecting Africa’s diverse realities.",
+                title: "Innovation Showcase",
+                text: "Highlighted scalable African childcare models.",
               },
               {
-                title: "Global Solidarity",
-                text:
-                  "Fostered meaningful partnerships between African actors and global allies.",
+                title: "Global Partnerships",
+                text: "Built collaborations between African and global actors.",
               },
             ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition"
-              >
-                <h3 className="font-semibold text-lg text-gray-900 mb-3">
-                  {item.title}
-                </h3>
+              <div key={i} className="bg-white p-6 rounded-xl shadow">
+                <h3 className="font-semibold mb-2">{item.title}</h3>
                 <p className="text-gray-600 text-sm">{item.text}</p>
               </div>
             ))}
+
           </div>
+
         </div>
       </section>
 
-      {/* Legacy & Continuation */}
+
+      {/* CONTINUATION */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+
+          <h2 className="text-3xl font-bold mb-6">
             From Kigali to Mombasa
           </h2>
 
           <p className="text-gray-600 mb-8">
-            ACFMombasa2026 is a strategic continuation of the momentum generated in
-            Kigali. Building on lessons, relationships, and commitments from
-            ACFKigali2025, the movement for childcare justice and equity continues
-            with renewed purpose and global relevance.
+            The momentum generated in Kigali continues at the Africa Childcare
+            Forum Mombasa 2026.
           </p>
 
           <a
             href="/#register"
-            className="inline-flex items-center gap-2 bg-[#E5553C] text-white font-semibold py-4 px-8 rounded-lg hover:bg-[#cf4b35] transition-colors"
+            className="inline-flex items-center gap-2 bg-[#E5553C] text-white px-8 py-4 rounded-lg hover:bg-[#cf4b35]"
           >
-            Join Us at ACFMombasa2026
-            <ArrowRight size={18} />
+            Join ACFMombasa2026
+            <ArrowRight size={18}/>
           </a>
+
         </div>
       </section>
+
     </main>
   );
 }
