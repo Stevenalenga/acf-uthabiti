@@ -49,21 +49,43 @@ export async function POST(req) {
         },
         body: JSON.stringify({
           email: participant.email,
-          full_name: participant.full_name,
-          amount: Number(payment.amount) * 129,
+
+          amount: Number(payment.amount) * 129 * 100, // Paystack expects kobo/cents
           currency: "KES",
+
           reference: payment.payment_reference,
+
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
+
+          /* FORCE CARD ONLY */
+
+          payment_options: "card",
+          channels: ["card"],
+
+          /* IMPORTANT FOR MULTI-SITE WEBHOOK */
+
           metadata: {
+            system: "acf-mombasa-2026",
             participant_id: participantId,
+
+            custom_fields: [
+              {
+                display_name: "Conference",
+                variable_name: "conference",
+                value: "ACF Mombasa 2026",
+              },
+              {
+                display_name: "Participant",
+                variable_name: "participant",
+                value: participant.full_name,
+              },
+            ],
           },
         }),
       }
     );
 
     const data = await paystackRes.json();
-
-    /* Paystack error handling */
 
     if (!data.status) {
       console.error("Paystack error:", data);

@@ -460,7 +460,7 @@ export default function RegistrationPage() {
           </div>
         )}
 
-        {/* <button
+        <button
         
           type="submit"
           disabled={submit}
@@ -476,7 +476,7 @@ export default function RegistrationPage() {
             "Submit Registration"
           )}
 
-        </button> */}
+        </button>
 
       </form>
     </section>
