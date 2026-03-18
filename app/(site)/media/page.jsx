@@ -7,7 +7,7 @@ export default function MediaResources() {
   const resources = [
     {
       title: "ACFKigali2025",
-      description: "The Kigali Commitments on Early Childhood Care and Development",
+      description: "The Kigali Commitments on Early Childhood Care & Development",
       icon: Users,
       file: "documents/The-Kigali-Commitments.pdf" 
     },
