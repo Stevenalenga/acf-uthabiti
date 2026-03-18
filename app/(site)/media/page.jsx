@@ -1,10 +1,16 @@
 "use client";
 
-import { FileText, Newspaper, FolderDown, Download } from "lucide-react";
+import { FileText, Newspaper, FolderDown, Download, Users } from "lucide-react";
 
 export default function MediaResources() {
 
   const resources = [
+    {
+      title: "ACFKigali2025",
+      description: "The Kigali Commitments on Early Childhood Care and Development",
+      icon: Users,
+      file: "documents/The-Kigali-Commitments.pdf" 
+    },
     {
       title: "Concept Note",
       description:
