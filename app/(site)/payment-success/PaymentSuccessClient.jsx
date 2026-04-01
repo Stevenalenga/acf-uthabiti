@@ -65,6 +65,9 @@ export default function PaymentSuccess() {
         });
 
         if (res.ok) {
+          sessionStorage.removeItem("paymentInProgress");
+          sessionStorage.removeItem("participantId");
+          localStorage.removeItem("participantId");
           setStatus("success");
         } else {
           setStatus("failed");
@@ -151,7 +154,7 @@ export default function PaymentSuccess() {
         <CheckCircle className="mx-auto h-16 w-16 text-green-600 mb-6" />
 
         <h1 className="text-3xl font-bold text-green-700 mb-3">
-          Payment Successful 🎉
+          Payment Successful
         </h1>
 
         <p className="text-gray-700 mb-6">
@@ -175,10 +178,10 @@ export default function PaymentSuccess() {
         </p>
 
         <Link
-          href="/"
+          href="/event-register"
           className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition"
         >
-          Return to Conference Website
+          Return to Conference registation page
         </Link>
 
       </div>

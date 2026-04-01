@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { countryCodes } from "@/lib/countryCodes";
 import { Calendar, Clock, Info } from "lucide-react";
 import { useToast } from "@/components/ui/ToastProvider";
@@ -72,74 +72,162 @@ export default function RegistrationPage() {
 
   const fee = form.phase && form.type ? FEES[form.phase]?.[form.type] : null;
 
+  // Progress steps 
+
   const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  if (!validate()) {
+    showToast({
+      type: "error",
+      message: "All fields are required",
+    });
+    return;
+  }
 
-    if (!validate()) {
-      showToast({
-        type: "error",
-        message: "All fields are required",
-      });
+  try {
+    setSubmit(true);
+
+    const res = await fetch("/api/event/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...form,
+        amount: fee,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error);
+
+    sessionStorage.setItem("participantId", data.participantId);
+    localStorage.setItem("participantId", data.participantId);
+
+    const { participantId, paymentStatus } = data;
+
+    /* ---------------- HANDLE STATUS ---------------- */
+
+    if (paymentStatus === "SUCCESS") {
+      sessionStorage.removeItem("paymentInProgress");
+      sessionStorage.removeItem("participantId");
+      localStorage.removeItem("participantId");
+      window.location.href = `/payment-success?reference=${data.reference}`;
       return;
     }
 
-    try {
-
-      setSubmit(true);
-      setStep("payment");
-
-      const res = await fetch("/api/event/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...form,
-          amount: fee,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error);
-
-      if (form.phase === "LateOnsite") {
-        setStep("confirmation");
-        return;
-      }
-
-      const paymentRes = await fetch("/api/payment/initialize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          participantId: data.participantId,
-        }),
-      });
-
-      const paymentData = await paymentRes.json();
-
-      setTimeout(() => {
-        window.location.href = paymentData.authorization_url;
-      }, 2000);
-
-    } catch (error) {
-
-      setStep("registration");
-
-      showToast({
-        type: "error",
-        message: error.message,
-      });
-
-    } finally {
-      setSubmit(false);
+    if (form.phase === "LateOnsite") {
+      sessionStorage.removeItem("paymentInProgress");
+      sessionStorage.removeItem("participantId");
+      localStorage.removeItem("participantId");
+      setStep("confirmation");
+      return;
     }
-  };
 
-  // Progress steps 
+    // If PENDING or FAILED reinitialize
+    setStep("payment");
+
+    const paymentRes = await fetch("/api/payment/initialize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ participantId }),
+    });
+
+    const paymentData = await paymentRes.json();
+
+    sessionStorage.setItem("paymentInProgress", "true");
+
+    window.location.href = paymentData.authorization_url;
+
+  } catch (error) {
+    setStep("registration");
+
+    showToast({
+      type: "error",
+      message: error.message,
+    });
+
+  } finally {
+    setSubmit(false);
+  }
+};
+
+useEffect(() => {
+  const inProgress = sessionStorage.getItem("paymentInProgress");
+
+  if (!inProgress) return;
+  setStep("payment_retry");
+}, []);
+
+
+const handleRetryPayment = async () => {
+  try {
+    const participantId =
+  sessionStorage.getItem("participantId") ||
+  localStorage.getItem("participantId");
+
+    if (!participantId) {
+      showToast({ type: "error", message: "Session expired" });
+      return;
+    }
+
+    setStep("payment");
+
+    const res = await fetch("/api/payment/initialize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ participantId }),
+    });
+
+    const data = await res.json();
+
+    window.location.href = data.authorization_url;
+
+  } catch (err) {
+    showToast({ type: "error", message: "Retry failed" });
+  }
+};
+
+const handleCancelPayment = async () => {
+  try {
+    const participantId =
+  sessionStorage.getItem("participantId") ||
+  localStorage.getItem("participantId");
+
+    if (!participantId) return;
+
+    await fetch("/api/payment/cancel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ participantId }),
+    });
+
+      sessionStorage.removeItem("paymentInProgress");
+      sessionStorage.removeItem("participantId");
+      localStorage.removeItem("participantId");
+
+    setStep("registration");
+
+    showToast({
+      type: "info",
+      message: "Payment cancelled",
+    });
+
+  } catch {
+    showToast({
+      type: "error",
+      message: "Could not cancel payment",
+    });
+  }
+};
 
   const ProgressSteps = () => {
 
@@ -202,10 +290,55 @@ export default function RegistrationPage() {
           Preparing your payment session...
         </p>
 
+        <p className="text-gray-600">
+         If nothing happens, please wait or retry.
+        </p>
+
       </section>
     );
 
   }
+
+  if (step === "payment_retry") {
+  return (
+    <section className="max-w-xl mx-auto py-28 text-center">
+
+      <ProgressSteps />
+
+      <div className="bg-yellow-50 border border-yellow-200 p-10 rounded-xl">
+
+        <h2 className="text-2xl font-bold text-yellow-700 mb-4">
+          Payment Not Completed
+        </h2>
+
+        <p className="text-gray-700 mb-6">
+          If you closed the payment window or something went wrong,
+          you can retry or cancel your payment.
+        </p>
+
+        <div className="flex justify-center gap-4">
+
+          <button
+            onClick={handleRetryPayment}
+            className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 cursor-pointer"
+          >
+            Retry Payment
+          </button>
+
+          <button
+            onClick={handleCancelPayment}
+            className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 cursor-pointer"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+  );
+}
 
   // Confirm step
    if (step === "confirmation") {
@@ -218,7 +351,7 @@ export default function RegistrationPage() {
         <div className="bg-green-50 border border-green-200 p-10 rounded-xl">
 
           <h2 className="text-2xl font-bold text-green-700 mb-4">
-            Registration Successful 🎉
+            Registration Successful
           </h2>
 
           <p className="text-gray-700 mb-4">

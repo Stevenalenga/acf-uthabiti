@@ -30,7 +30,36 @@ export async function POST(req) {
       amount,
     } = body;
 
-    const reference = `CONF-${crypto.randomUUID()}`;
+    /* ---------------- CHECK EXISTING ---------------- */
+    const event = await prisma.event_tbl.findFirst({
+      where: { isActive: true },
+    });
+
+    const existingParticipant = await prisma.participant_registration_tbl.findFirst({
+      where: { email, event_id: event.event_id },
+      include: {
+        payments: {
+          orderBy: { payment_id: "desc" },
+          take: 1,
+        },
+      },
+    });
+
+    if (existingParticipant) {
+      const payment = existingParticipant.payments?.[0];
+
+      if (payment) {
+        return Response.json(
+          safeJson({
+            participantId: existingParticipant.participant_id,
+            paymentStatus: payment.status, // SUCCESS | PENDING | FAILED
+            reference: payment.payment_reference,
+          })
+        );
+      }
+    }
+
+    /* ---------------- CREATE NEW ---------------- */
 
     const participant = await prisma.participant_registration_tbl.create({
       data: {
@@ -50,34 +79,26 @@ export async function POST(req) {
         media_consent: mediaConsent,
         report_consent: reportConsent,
         emergency_contact: emergencyContact,
-        payment_reference: reference,
 
         accessibility: {
-          create: accessibility.map((value) => ({
-            value,
-          })),
+          create: accessibility.map((value) => ({ value })),
         },
 
         dietary: {
-          create: dietaryRestrictions.map((value) => ({
-            value,
-          })),
+          create: dietaryRestrictions.map((value) => ({ value })),
         },
       },
     });
 
-    // Create payment record
     await prisma.payment_tbl.create({
       data: {
         participant_id: participant.participant_id,
         amount: amount,
         method: phase === "LateOnsite" ? "ONSITE" : "PAYSTACK",
         status: "PENDING",
-        payment_reference: reference,
       },
     });
 
-    // Send confirmation email
     await transporter.sendMail({
       from: `"Conference Team" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -92,8 +113,9 @@ export async function POST(req) {
     });
 
     return Response.json(
-        safeJson({
+      safeJson({
         participantId: participant.participant_id,
+        paymentStatus: "PENDING",
       })
     );
 

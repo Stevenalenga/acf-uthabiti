@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { safeJson } from "@/lib/json";
+import crypto from "crypto";
 
 export async function POST(req) {
   try {
@@ -30,7 +31,10 @@ export async function POST(req) {
       );
     }
 
-    const payment = participant.payments?.[0];
+    const payment = await prisma.payment_tbl.findFirst({
+      where: { participant_id: BigInt(participantId) },
+      orderBy: { createdAt: "desc" },
+    });
 
     if (!payment) {
       return Response.json(
@@ -38,6 +42,13 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
+    const reference = `CONF-${crypto.randomUUID()}`;
+
+    await prisma.payment_tbl.update({
+      where: { payment_id: payment.payment_id },
+      data: { payment_reference: reference },
+    });
 
     const paystackRes = await fetch(
       "https://api.paystack.co/transaction/initialize",
@@ -53,7 +64,7 @@ export async function POST(req) {
           amount: Number(payment.amount) * 129 * 100, // Paystack expects kobo/cents
           currency: "KES",
 
-          reference: payment.payment_reference,
+          reference: reference,
 
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
 
@@ -61,8 +72,6 @@ export async function POST(req) {
 
           payment_options: "card",
           channels: ["card"],
-
-          /* IMPORTANT FOR MULTI-SITE WEBHOOK */
 
           metadata: {
             system: "acf-mombasa-2026",

@@ -25,8 +25,26 @@ enum PaymentStatus {
   FAILED
 }
 
+model event_tbl {
+  event_id   BigInt   @id @default(autoincrement())
+  name       String
+  code       String   @unique
+  start_date DateTime?
+  end_date   DateTime?
+
+  isActive   Boolean  @default(true)
+
+  registration participant_registration_tbl[]
+
+  createdAt DateTime @default(now())
+}
+
 model participant_registration_tbl {
   participant_id          BigInt   @id @default(autoincrement())
+
+  event_id               BigInt?
+  event                  event_tbl? @relation(fields: [event_id], references: [event_id])
+
   full_name               String
   email                   String
   phone                   String
@@ -44,7 +62,6 @@ model participant_registration_tbl {
   report_consent          String
   emergency_contact       String?
   paid                    Boolean  @default(false)
-  payment_reference       String?
 
   accessibility       registration_accessibility_tbl[]
   dietary             registration_dietary_tbl[]
@@ -53,10 +70,11 @@ model participant_registration_tbl {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
+  @@unique([email, event_id])
   @@index([email])
+  @@index([event_id])
   @@index([phase])
   @@index([type])
-  @@index([payment_reference])
 }
 
 model registration_accessibility_tbl {
@@ -86,9 +104,9 @@ model payment_tbl {
   currency                String   @default("USD")
   method                  String
   status                  PaymentStatus
-  payment_reference       String
+  payment_reference       String?
 
-  registrations           participant_registration_tbl @relation(fields: [participant_id], references: [participant_id])
+  registration           participant_registration_tbl @relation(fields: [participant_id], references: [participant_id])
 
   paidAt                  DateTime?
   createdAt               DateTime @default(now())
