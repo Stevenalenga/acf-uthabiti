@@ -49,7 +49,7 @@ export default function Header() {
     name: "Steering Committee",
     href: "/steering-committee",
     icon: UsersRound,
-    desc: "The steering committee for ACFMombasa2026",
+    desc: "Meet the steering committee for ACFMombasa2026",
   },
   {
     name: "Why Attend",
