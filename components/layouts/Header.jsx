@@ -15,7 +15,7 @@ import {
   LayoutGrid,
   Globe,
   Mail,
-  Users,
+  Users, UsersRound
 } from "lucide-react";
 
 export default function Header() {
@@ -45,6 +45,12 @@ export default function Header() {
   };
 
   const sections = [
+  {
+    name: "Steering Committee",
+    href: "/steering-committee",
+    icon: UsersRound,
+    desc: "The steering committee for ACFMombasa2026",
+  },
   {
     name: "Why Attend",
     href: "#why-attend",
