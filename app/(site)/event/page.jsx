@@ -13,13 +13,13 @@ export default function ACFKigali2025Page() {
   const images = [
     "/images/kigali-forum/forum1.jpg",
     "/images/kigali-forum/forum2.jpg",
-    "/images/kigali-forum/forum3.jpg",
+    "/images/kigali-forum/forum10.jpg",
     "/images/kigali-forum/forum4.jpg",
     "/images/kigali-forum/forum5.jpg",
     "/images/kigali-forum/forum6.jpg",
     "/images/kigali-forum/forum7.jpg",
-    "/images/kigali-forum/forum8.jpg",
-    "/images/kigali-forum/forum9.jpg",
+    "/images/kigali-forum/forum11.jpg",
+    "/images/kigali-forum/forum12.jpg",
   ];
 
   return (

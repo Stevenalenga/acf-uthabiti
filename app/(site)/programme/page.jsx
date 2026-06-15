@@ -17,7 +17,7 @@ export default function ProgrammePage() {
   const days = [
     {
       title: "Day 1 – Policy Leadership and Systems Transformation",
-      date: "16 September 2026",
+      date: "13 October 2026",
       icon: Globe,
       sessions: [
         "Opening Ceremony and Welcome Remarks",
@@ -30,7 +30,7 @@ export default function ProgrammePage() {
     },
     {
       title: "Day 2 – Solutions, Partnerships, and Innovation",
-      date: "17 September 2026",
+      date: "14 October 2026",
       icon: Lightbulb,
       sessions: [
         "Partner-Led Sessions and Technical Workshops",
@@ -44,7 +44,7 @@ export default function ProgrammePage() {
     },
     {
       title: "Day 3 – Field Visits and Learning in Practice",
-      date: "18 September 2026",
+      date: "15 October 2026",
       icon: MapPin,
       sessions: [
         "Community-Based Childcare Programme Visits",
@@ -77,7 +77,7 @@ export default function ProgrammePage() {
           </h1>
 
           <p className="text-lg md:text-xl text-gray-200">
-            16–18 September 2026 • Mombasa, Kenya
+            13–15 October 2026 • Mombasa, Kenya
           </p>
 
         </div>

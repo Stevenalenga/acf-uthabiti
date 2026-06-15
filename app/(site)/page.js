@@ -105,7 +105,7 @@ export default function HomePage() {
                 <span>PrideInn Paradise Hotel</span>
                 <span className="mx-2">|</span>
                 <Calendar size={16} className="text-[#E5553C]"/>
-                <span>16 – 18 September 2026</span>
+                <span>13 – 15 October 2026</span>
               </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -763,7 +763,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8 mb-16">
 
             <div className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition">
-              <div className="text-[#E5553C] text-3xl mb-4">🌍</div>
+              <div className="text-[#E5553C] text-3xl mb-4"><Globe size={28} /></div>
               <h3 className="font-bold text-lg text-gray-900 mb-2">
                 Continental Visibility
               </h3>
@@ -773,7 +773,7 @@ export default function HomePage() {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition">
-              <div className="text-[#E5553C] text-3xl mb-4">🤝</div>
+              <div className="text-[#E5553C] text-3xl mb-4"><Handshake size={28} /></div>
               <h3 className="font-bold text-lg text-gray-900 mb-2">
                 Engage Decision-Makers
               </h3>
@@ -783,7 +783,7 @@ export default function HomePage() {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition">
-              <div className="text-[#E5553C] text-3xl mb-4">🚀</div>
+              <div className="text-[#E5553C] text-3xl mb-4"><Lightbulb size={28} /></div>
               <h3 className="font-bold text-lg text-gray-900 mb-2">
                 Drive Impact
               </h3>
@@ -963,7 +963,7 @@ export default function HomePage() {
 
               <div className="flex items-center gap-2">
                 <Calendar className="text-[#E5553C]" size={20}/>
-                16–18 September 2026
+                13 - 15 October 2026
               </div>
 
             </div>
