@@ -290,7 +290,11 @@ const handleCancelPayment = async () => {
           Preparing your payment session...
         </p>
 
-        <p className="text-gray-600">
+        <p className="text-sm text-gray-500 mt-4">
+          You can pay with card, M-Pesa, or bank transfer.
+        </p>
+
+        <p className="text-gray-600 mt-4">
          If nothing happens, please wait or retry.
         </p>
 

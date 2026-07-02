@@ -35,6 +35,13 @@ export async function POST(req) {
       where: { isActive: true },
     });
 
+    if (!event) {
+      return Response.json(
+        { error: "No active conference event is configured. Please contact support." },
+        { status: 503 }
+      );
+    }
+
     const existingParticipant = await prisma.participant_registration_tbl.findFirst({
       where: { email, event_id: event.event_id },
       include: {
@@ -63,6 +70,7 @@ export async function POST(req) {
 
     const participant = await prisma.participant_registration_tbl.create({
       data: {
+        event_id: event.event_id,
         full_name: fullName,
         email,
         phone,
