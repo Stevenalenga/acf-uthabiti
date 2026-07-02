@@ -129,7 +129,7 @@ export default function PaymentSuccess() {
           </p>
 
           <Link
-            href="/registration"
+            href="/event-register"
             className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition"
           >
             Try Again
