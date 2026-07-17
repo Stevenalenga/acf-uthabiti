@@ -110,7 +110,7 @@ export default function HomePage() {
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <a
-                  href="#register"
+                  href="/event-register"
                   className="bg-[#E5553C] hover:bg-[#cc4a35] text-white font-semibold px-8 py-4 rounded-lg shadow transition"
                 >
                   Register Now

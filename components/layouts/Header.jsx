@@ -224,13 +224,12 @@ export default function Header() {
             </Link>
 
             {/* REGISTER BUTTON */}
-            <a
-              href="#register"
-              onClick={() => handleNavClick("#register")}
+            <Link
+              href="/event-register"
               className="bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-[#cc4a35] transition"
             >
               Register
-            </a>
+            </Link>
           </nav>
 
           {/* MOBILE MENU BUTTON */}
@@ -318,13 +317,13 @@ export default function Header() {
                 Contact
               </Link>
 
-              <a
-                href="#register"
-                onClick={() => handleNavClick("#register")}
+              <Link
+                href="/event-register"
+                onClick={() => setOpen(false)}
                 className="block text-center bg-[#E5553C] text-white py-3 rounded-lg font-semibold"
               >
                 Register
-              </a>
+              </Link>
             </div>
           </div>
         )}

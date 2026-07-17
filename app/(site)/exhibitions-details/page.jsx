@@ -92,7 +92,7 @@ export default function ExhibitionsPage() {
 
           <div className="mt-12 text-center">
             <a
-              href="#register"
+              href="/event-register"
               className="inline-flex items-center gap-2 bg-[#E5553C] text-white font-semibold py-4 px-8 rounded-lg hover:bg-[#cf4b35] transition"
             >
               Reserve Your Spot

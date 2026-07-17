@@ -220,7 +220,7 @@ export default function ACFKigali2025Page() {
           </p>
 
           <a
-            href="/#register"
+            href="/event-register"
             className="inline-flex items-center gap-2 bg-[#E5553C] text-white px-8 py-4 rounded-lg hover:bg-[#cf4b35]"
           >
             Join ACFMombasa2026
