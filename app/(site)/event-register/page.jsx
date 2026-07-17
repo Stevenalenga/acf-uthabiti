@@ -172,6 +172,17 @@ export default function RegistrationPage() {
 
       const paymentData = await paymentRes.json();
 
+      if (!paymentRes.ok || !paymentData.authorization_url) {
+        setStep("payment_retry");
+        showToast({
+          type: "warning",
+          message:
+            paymentData.error ||
+            "Registration saved, but payment could not start. Please retry payment.",
+        });
+        return;
+      }
+
       sessionStorage.setItem("paymentInProgress", "true");
 
       window.location.href = paymentData.authorization_url;
@@ -216,6 +227,15 @@ export default function RegistrationPage() {
       });
 
       const data = await res.json();
+
+      if (!res.ok || !data.authorization_url) {
+        showToast({
+          type: "error",
+          message: data.error || "Retry failed",
+        });
+        setStep("payment_retry");
+        return;
+      }
 
       window.location.href = data.authorization_url;
     } catch {
