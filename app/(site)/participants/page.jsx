@@ -58,7 +58,6 @@ export default function ParticipantsPage() {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [searchInput, setSearchInput] = useState("");
   const [expandedId, setExpandedId] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
 
   const activeFilterCount = useMemo(
     () => Object.values(filters).filter(Boolean).length,
@@ -271,91 +270,87 @@ export default function ParticipantsPage() {
         </div>
 
         {/* Search & Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search by name, email, organization, or phone..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-
-            <button
-              onClick={() => setShowFilters((v) => !v)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium hover:bg-gray-50 cursor-pointer"
-            >
-              <Filter className="h-4 w-4" />
-              Filters
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-orange-600" />
+              <h2 className="text-sm font-semibold text-gray-900">
+                Filter Participants
+              </h2>
               {activeFilterCount > 0 && (
-                <span className="bg-orange-600 text-white text-xs rounded-full px-2 py-0.5">
-                  {activeFilterCount}
+                <span className="bg-orange-100 text-orange-700 text-xs font-semibold rounded-full px-2.5 py-0.5">
+                  {activeFilterCount} active
                 </span>
               )}
-            </button>
+            </div>
+            {activeFilterCount > 0 && (
+              <button
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+                Clear all
+              </button>
+            )}
           </div>
 
-          {(showFilters || activeFilterCount > 0) && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 border-t border-gray-100">
-              <FilterSelect
-                label="Payment Status"
-                value={filters.paymentStatus}
-                onChange={(v) => setFilters((f) => ({ ...f, paymentStatus: v }))}
-                options={[
-                  { value: "", label: "All statuses" },
-                  { value: "SUCCESS", label: "Paid (Success)" },
-                  { value: "PENDING", label: "Pending" },
-                  { value: "FAILED", label: "Failed" },
-                ]}
-              />
-              <FilterSelect
-                label="Registration Phase"
-                value={filters.phase}
-                onChange={(v) => setFilters((f) => ({ ...f, phase: v }))}
-                options={[
-                  { value: "", label: "All phases" },
-                  { value: "EarlyBird", label: "Early Bird" },
-                  { value: "Regular", label: "Regular" },
-                  { value: "LateOnsite", label: "Late / On-site" },
-                ]}
-              />
-              <FilterSelect
-                label="Participant Type"
-                value={filters.type}
-                onChange={(v) => setFilters((f) => ({ ...f, type: v }))}
-                options={[
-                  { value: "", label: "All types" },
-                  { value: "student", label: "Student" },
-                  { value: "eastAfrica", label: "East Africa" },
-                  { value: "other", label: "International" },
-                ]}
-              />
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">
-                  Event ID
-                </label>
+          <div className="p-4 sm:p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
-                  value={filters.eventId}
-                  onChange={(e) =>
-                    setFilters((f) => ({ ...f, eventId: e.target.value }))
-                  }
-                  placeholder="Optional"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Search by name, email, organization, or phone..."
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
-              <div className="flex items-end">
-                <button
-                  onClick={clearFilters}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 cursor-pointer"
-                >
-                  <X className="h-4 w-4" />
-                  Clear filters
-                </button>
-              </div>
+              <input
+                value={filters.eventId}
+                onChange={(e) =>
+                  setFilters((f) => ({ ...f, eventId: e.target.value }))
+                }
+                placeholder="Event ID (optional)"
+                className="w-full sm:w-44 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
             </div>
-          )}
+
+            <FilterTabs
+              label="Payment Status"
+              value={filters.paymentStatus}
+              onChange={(v) => setFilters((f) => ({ ...f, paymentStatus: v }))}
+              options={[
+                { value: "", label: "All" },
+                { value: "SUCCESS", label: "Paid", dot: "bg-green-500" },
+                { value: "PENDING", label: "Pending", dot: "bg-amber-500" },
+                { value: "FAILED", label: "Failed", dot: "bg-red-500" },
+              ]}
+            />
+
+            <FilterTabs
+              label="Phase"
+              value={filters.phase}
+              onChange={(v) => setFilters((f) => ({ ...f, phase: v }))}
+              options={[
+                { value: "", label: "All" },
+                { value: "EarlyBird", label: "Early Bird" },
+                { value: "Regular", label: "Regular" },
+                { value: "LateOnsite", label: "Late / On-site" },
+              ]}
+            />
+
+            <FilterTabs
+              label="Participant Type"
+              value={filters.type}
+              onChange={(v) => setFilters((f) => ({ ...f, type: v }))}
+              options={[
+                { value: "", label: "All" },
+                { value: "student", label: "Student" },
+                { value: "eastAfrica", label: "East Africa" },
+                { value: "other", label: "International" },
+              ]}
+            />
+          </div>
         </div>
 
         {/* Results summary */}
@@ -640,21 +635,39 @@ function DetailItem({ label, value }) {
   );
 }
 
-function FilterSelect({ label, value, onChange, options }) {
+function FilterTabs({ label, value, onChange, options }) {
   return (
-    <div>
-      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
-      >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+      <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 sm:w-32 shrink-0">
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => {
+          const isActive = value === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              aria-pressed={isActive}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition cursor-pointer ${
+                isActive
+                  ? "bg-orange-600 border-orange-600 text-white shadow-sm"
+                  : "bg-white border-gray-300 text-gray-700 hover:border-orange-400 hover:text-orange-700"
+              }`}
+            >
+              {opt.dot && (
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    isActive ? "bg-white" : opt.dot
+                  }`}
+                />
+              )}
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

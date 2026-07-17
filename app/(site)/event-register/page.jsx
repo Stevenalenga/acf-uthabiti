@@ -11,12 +11,7 @@ import CheckboxGroup from "@/components/registration/CheckboxGroup";
 import RadioGroup from "@/components/registration/RadioGroup";
 import FormSection from "@/components/registration/FormSection";
 import ProgressSteps from "@/components/registration/ProgressSteps";
-
-const FEES = {
-  EarlyBird: { student: 60, eastAfrica: 300, other: 375 },
-  Regular: { student: 75, eastAfrica: 350, other: 425 },
-  LateOnsite: { student: 90, eastAfrica: 400, other: 475 },
-};
+import { FEES } from "@/lib/documents/constants";
 
 const FIELD_ORDER = [
   "fullName",
