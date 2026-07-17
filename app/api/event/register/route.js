@@ -72,12 +72,33 @@ export async function POST(req) {
       const existingPayment = existingParticipant.payments?.[0];
 
       if (existingPayment) {
+        // Re-issue (or resend) the invoice so users who never received the
+        // email get it when they come back and register again.
+        let invoiceNumber =
+          existingParticipant.documents?.[0]?.document_number || null;
+
+        if (existingPayment.status !== "SUCCESS") {
+          try {
+            const invoice = await issueRegistrationInvoice({
+              participant: existingParticipant,
+              payment: existingPayment,
+              eventId: event.event_id,
+            });
+            invoiceNumber = invoice?.document_number || invoiceNumber;
+          } catch (docError) {
+            console.error(
+              "Invoice re-issue failed:",
+              docError?.message || docError
+            );
+          }
+        }
+
         return Response.json(
           safeJson({
             participantId: existingParticipant.participant_id,
             paymentStatus: existingPayment.status,
             reference: existingPayment.payment_reference,
-            invoiceNumber: existingParticipant.documents?.[0]?.document_number || null,
+            invoiceNumber,
           })
         );
       }

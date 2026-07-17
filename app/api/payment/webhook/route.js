@@ -30,7 +30,7 @@ export async function POST(req) {
   const payment = await prisma.payment_tbl.findFirst({
     where: { payment_reference: reference },
     include: {
-      participant: true,
+      registration: true,
     },
   });
 
@@ -38,7 +38,7 @@ export async function POST(req) {
     return new Response("Payment not found", { status: 200 });
   }
 
-  const participant = payment.participant;
+  const participant = payment.registration;
 
   /* ---------------- SUCCESS ---------------- */
 
@@ -61,13 +61,17 @@ export async function POST(req) {
     ]);
 
     if (!alreadyConfirmed) {
-      await sendPaymentConfirmationEmail({
-        participant,
-        payment: { ...payment, status: "SUCCESS", paidAt: new Date() },
-        amount: payment.amount,
-        reference,
-        paidAt: new Date(),
-      });
+      try {
+        await sendPaymentConfirmationEmail({
+          participant,
+          payment: { ...payment, status: "SUCCESS", paidAt: new Date() },
+          amount: payment.amount,
+          reference,
+          paidAt: new Date(),
+        });
+      } catch (emailError) {
+        console.error("Payment confirmation email failed:", emailError);
+      }
     }
   }
 

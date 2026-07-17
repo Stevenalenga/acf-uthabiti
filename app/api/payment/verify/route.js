@@ -23,7 +23,7 @@ export async function POST(req) {
     const payment = await prisma.payment_tbl.findFirst({
       where: { payment_reference: reference },
       include: {
-        participant: true,
+        registration: true,
       },
     });
 
@@ -52,13 +52,19 @@ export async function POST(req) {
     ]);
 
     if (!alreadyConfirmed) {
-      await sendPaymentConfirmationEmail({
-        participant: payment.participant,
-        payment: { ...payment, status: "SUCCESS", paidAt },
-        amount: payment.amount,
-        reference,
-        paidAt,
-      });
+      try {
+        await sendPaymentConfirmationEmail({
+          participant: payment.registration,
+          payment: { ...payment, status: "SUCCESS", paidAt },
+          amount: payment.amount,
+          reference,
+          paidAt,
+        });
+      } catch (emailError) {
+        // Payment is already marked SUCCESS; do not fail the request because
+        // the confirmation email could not be sent. The webhook retries later.
+        console.error("Payment confirmation email failed:", emailError);
+      }
     }
 
     return Response.json({ success: true });
