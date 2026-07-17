@@ -25,6 +25,17 @@ enum PaymentStatus {
   FAILED
 }
 
+enum DocumentType {
+  INVOICE
+  RECEIPT
+}
+
+enum DocumentStatus {
+  ISSUED
+  PAID
+  VOID
+}
+
 model event_tbl {
   event_id   BigInt   @id @default(autoincrement())
   name       String
@@ -66,6 +77,7 @@ model participant_registration_tbl {
   accessibility       registration_accessibility_tbl[]
   dietary             registration_dietary_tbl[]
   payments                payment_tbl[]
+  documents               registration_document_tbl[]
 
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
@@ -107,6 +119,7 @@ model payment_tbl {
   payment_reference       String?
 
   registration           participant_registration_tbl @relation(fields: [participant_id], references: [participant_id])
+  documents              registration_document_tbl[]
 
   paidAt                  DateTime?
   createdAt               DateTime @default(now())
@@ -115,6 +128,30 @@ model payment_tbl {
   @@index([participant_id])
   @@index([status])
   @@index([payment_reference])
+}
+
+model registration_document_tbl {
+  document_id     BigInt         @id @default(autoincrement())
+  participant_id  BigInt
+  payment_id      BigInt?
+  event_id        BigInt?
+  type            DocumentType
+  document_number String         @unique
+  file_name       String
+  file_path       String
+  amount          Float
+  currency        String         @default("USD")
+  status          DocumentStatus @default(ISSUED)
+  issued_at       DateTime       @default(now())
+
+  participant participant_registration_tbl @relation(fields: [participant_id], references: [participant_id], onDelete: Cascade)
+  payment     payment_tbl?                 @relation(fields: [payment_id], references: [payment_id], onDelete: SetNull)
+
+  @@index([participant_id])
+  @@index([payment_id])
+  @@index([type])
+  @@index([status])
+  @@index([issued_at])
 }
 
 model NewsletterSubscriber {

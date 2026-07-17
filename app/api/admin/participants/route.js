@@ -30,14 +30,16 @@ export async function GET(req) {
       event: true,
       payments: {
         orderBy: { createdAt: "desc" },
-        take: 1, // latest payment only
+        take: 1,
+      },
+      documents: {
+        orderBy: { issued_at: "desc" },
       },
     },
     skip: (page - 1) * limit,
     take: limit,
   });
 
-  // filter by payment status AFTER fetch (since it's relational)
   const filtered = paymentStatus
     ? participants.filter(
         (p) => p.payments[0]?.status === paymentStatus
@@ -48,12 +50,12 @@ export async function GET(req) {
 
   return Response.json(
     safeJson({
-    data: filtered,
-    meta: {
-      page,
-      limit,
-      total,
-    },
-  })
-);
+      data: filtered,
+      meta: {
+        page,
+        limit,
+        total,
+      },
+    })
+  );
 }

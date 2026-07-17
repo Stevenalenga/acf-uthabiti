@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { transporter } from "@/lib/mailer";
-import crypto from "crypto";
-import { conferenceRegistrationTemplate } from "@/lib/emailTemplate";
 import { safeJson } from "@/lib/json";
+import { issueRegistrationInvoice } from "@/lib/documents/issueInvoice";
 
 export async function POST(req) {
   try {
@@ -30,7 +28,6 @@ export async function POST(req) {
       amount,
     } = body;
 
-    /* ---------------- CHECK EXISTING ---------------- */
     const event = await prisma.event_tbl.findFirst({
       where: { isActive: true },
     });
@@ -49,6 +46,11 @@ export async function POST(req) {
           orderBy: { payment_id: "desc" },
           take: 1,
         },
+        documents: {
+          where: { type: "INVOICE", status: { not: "VOID" } },
+          orderBy: { document_id: "desc" },
+          take: 1,
+        },
       },
     });
 
@@ -59,14 +61,13 @@ export async function POST(req) {
         return Response.json(
           safeJson({
             participantId: existingParticipant.participant_id,
-            paymentStatus: payment.status, // SUCCESS | PENDING | FAILED
+            paymentStatus: payment.status,
             reference: payment.payment_reference,
+            invoiceNumber: existingParticipant.documents?.[0]?.document_number || null,
           })
         );
       }
     }
-
-    /* ---------------- CREATE NEW ---------------- */
 
     const participant = await prisma.participant_registration_tbl.create({
       data: {
@@ -98,7 +99,7 @@ export async function POST(req) {
       },
     });
 
-    await prisma.payment_tbl.create({
+    const payment = await prisma.payment_tbl.create({
       data: {
         participant_id: participant.participant_id,
         amount: amount,
@@ -107,26 +108,24 @@ export async function POST(req) {
       },
     });
 
-    await transporter.sendMail({
-      from: `"Conference Team" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Conference Registration Confirmation",
-      html: conferenceRegistrationTemplate({
-        name: fullName,
-        phase,
-        type,
-        amount,
-        paymentStatus: "PENDING",
-      }),
-    });
+    let invoice;
+    try {
+      invoice = await issueRegistrationInvoice({
+        participant,
+        payment,
+        eventId: event.event_id,
+      });
+    } catch (docError) {
+      console.error("Invoice generation failed:", docError);
+    }
 
     return Response.json(
       safeJson({
         participantId: participant.participant_id,
         paymentStatus: "PENDING",
+        invoiceNumber: invoice?.document_number || null,
       })
     );
-
   } catch (error) {
     console.error(error);
     return Response.json(

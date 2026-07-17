@@ -1,7 +1,8 @@
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { transporter } from "@/lib/mailer";
-import { paymentSuccessTemplate, paymentFailedTemplate, paymentNotVerifiedTemplate } from "@/lib/emailTemplate";
+import { paymentFailedTemplate } from "@/lib/emailTemplate";
+import { sendPaymentConfirmationEmail } from "@/lib/sendPaymentConfirmationEmail";
 
 export async function POST(req) {
 
@@ -42,6 +43,7 @@ export async function POST(req) {
   /* ---------------- SUCCESS ---------------- */
 
   if (event.event === "charge.success") {
+    const alreadyConfirmed = payment.status === "SUCCESS";
 
     await prisma.$transaction([
       prisma.payment_tbl.update({
@@ -58,18 +60,15 @@ export async function POST(req) {
       }),
     ]);
 
-    await transporter.sendMail({
-      from: `"Conference Team" <${process.env.EMAIL_USER}>`,
-      to: participant.email,
-      subject: "Payment Confirmed - Conference Registration",
-      html: paymentSuccessTemplate({
-        name: participant.full_name,
-        phase: participant.phase,
-        type: participant.type,
+    if (!alreadyConfirmed) {
+      await sendPaymentConfirmationEmail({
+        participant,
+        payment: { ...payment, status: "SUCCESS", paidAt: new Date() },
         amount: payment.amount,
         reference,
-      }),
-    });
+        paidAt: new Date(),
+      });
+    }
   }
 
   /* ---------------- FAILED ---------------- */

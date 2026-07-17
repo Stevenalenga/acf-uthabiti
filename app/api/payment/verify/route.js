@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { sendPaymentConfirmationEmail } from "@/lib/sendPaymentConfirmationEmail";
 
 export async function POST(req) {
   try {
@@ -21,18 +22,24 @@ export async function POST(req) {
 
     const payment = await prisma.payment_tbl.findFirst({
       where: { payment_reference: reference },
+      include: {
+        participant: true,
+      },
     });
 
     if (!payment) {
       return Response.json({ error: "Payment not found" }, { status: 404 });
     }
 
+    const alreadyConfirmed = payment.status === "SUCCESS";
+    const paidAt = new Date();
+
     await prisma.$transaction([
       prisma.payment_tbl.update({
         where: { payment_id: payment.payment_id },
         data: {
           status: "SUCCESS",
-          paidAt: new Date(),
+          paidAt,
         },
       }),
 
@@ -44,8 +51,17 @@ export async function POST(req) {
       }),
     ]);
 
-    return Response.json({ success: true });
+    if (!alreadyConfirmed) {
+      await sendPaymentConfirmationEmail({
+        participant: payment.participant,
+        payment: { ...payment, status: "SUCCESS", paidAt },
+        amount: payment.amount,
+        reference,
+        paidAt,
+      });
+    }
 
+    return Response.json({ success: true });
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Verification failed" }, { status: 500 });

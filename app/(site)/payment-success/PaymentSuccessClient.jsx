@@ -173,8 +173,16 @@ export default function PaymentSuccess() {
         )}
 
         <p className="text-gray-600 mb-8">
-          A confirmation email with your registration details has been sent
-          to your email address.
+          A confirmation email with your receipt and registration details has been sent
+          to your email address. For questions or changes to your registration,
+          please contact{" "}
+          <a
+            href="mailto:acf@uthabitiafrica.org"
+            className="text-orange-600 hover:underline"
+          >
+            acf@uthabitiafrica.org
+          </a>
+          .
         </p>
 
         <Link
