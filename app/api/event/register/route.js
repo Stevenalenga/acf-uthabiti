@@ -26,6 +26,7 @@ export async function POST(req) {
       reportConsent,
       emergencyContact,
       amount,
+      inviteToken,
     } = body;
 
     if (!email?.trim() || !fullName?.trim()) {
@@ -35,7 +36,40 @@ export async function POST(req) {
       );
     }
 
-    if (amount == null || Number.isNaN(Number(amount))) {
+    // Special CEO invitation: the invite's amount is authoritative and the
+    // client-posted amount is ignored.
+    let invite = null;
+
+    if (inviteToken) {
+      invite = await prisma.special_invite_tbl.findUnique({
+        where: { token: String(inviteToken) },
+      });
+
+      if (!invite) {
+        return Response.json(
+          { error: "This invitation link is not valid." },
+          { status: 400 }
+        );
+      }
+
+      if (invite.status === "USED") {
+        return Response.json(
+          { error: "This invitation link has already been used." },
+          { status: 400 }
+        );
+      }
+
+      if (invite.email !== email.trim().toLowerCase()) {
+        return Response.json(
+          { error: "This invitation was issued for a different email address." },
+          { status: 400 }
+        );
+      }
+    }
+
+    const effectiveAmount = invite ? Number(invite.amount) : Number(amount);
+
+    if (!invite && (amount == null || Number.isNaN(Number(amount)))) {
       return Response.json(
         { error: "Registration fee is missing. Please select phase and type." },
         { status: 400 }
@@ -106,11 +140,21 @@ export async function POST(req) {
       const resumedPayment = await prisma.payment_tbl.create({
         data: {
           participant_id: existingParticipant.participant_id,
-          amount: Number(amount),
+          amount: effectiveAmount,
           method: phase === "LateOnsite" ? "ONSITE" : "PAYSTACK",
           status: "PENDING",
         },
       });
+
+      if (invite) {
+        await prisma.special_invite_tbl.update({
+          where: { invite_id: invite.invite_id },
+          data: {
+            status: "USED",
+            participant_id: existingParticipant.participant_id,
+          },
+        });
+      }
 
       let invoiceNumber = null;
       try {
@@ -169,11 +213,21 @@ export async function POST(req) {
       const createdPayment = await tx.payment_tbl.create({
         data: {
           participant_id: createdParticipant.participant_id,
-          amount: Number(amount),
+          amount: effectiveAmount,
           method: phase === "LateOnsite" ? "ONSITE" : "PAYSTACK",
           status: "PENDING",
         },
       });
+
+      if (invite) {
+        await tx.special_invite_tbl.update({
+          where: { invite_id: invite.invite_id },
+          data: {
+            status: "USED",
+            participant_id: createdParticipant.participant_id,
+          },
+        });
+      }
 
       return { participant: createdParticipant, payment: createdPayment };
     });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar, Info } from "lucide-react";
+import { Calendar, Info, Gift } from "lucide-react";
 import { useToast } from "@/components/ui/ToastProvider";
 import FormInput from "@/components/registration/FormInput";
 import FormTextarea from "@/components/registration/FormTextarea";
@@ -56,6 +56,44 @@ export default function RegistrationPage() {
 
   const [errors, setErrors] = useState({});
 
+  // Special CEO invitation (via ?invite=TOKEN in the URL)
+  const [invite, setInvite] = useState(null);
+  const [inviteError, setInviteError] = useState("");
+
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get("invite");
+    if (!token) return;
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/invite/${token}`);
+        const result = await res.json();
+
+        if (!res.ok) {
+          setInviteError(
+            result.error || "This invitation link is not valid."
+          );
+          return;
+        }
+
+        setInvite(result.data);
+        setForm((prev) => ({
+          ...prev,
+          email: result.data.email || prev.email,
+          fullName: prev.fullName || result.data.name || "",
+          // Invited guests skip the phase/type fee matrix; sensible defaults
+          // are stored for the registration record.
+          phase: "Regular",
+          type: "other",
+        }));
+      } catch {
+        setInviteError(
+          "Could not verify your invitation link. Please try again."
+        );
+      }
+    })();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -101,7 +139,11 @@ export default function RegistrationPage() {
     return { valid: Object.keys(newErrors).length === 0, newErrors };
   };
 
-  const fee = form.phase && form.type ? FEES[form.phase]?.[form.type] : null;
+  const fee = invite
+    ? invite.amount
+    : form.phase && form.type
+      ? FEES[form.phase]?.[form.type]
+      : null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,6 +169,7 @@ export default function RegistrationPage() {
         body: JSON.stringify({
           ...form,
           amount: fee,
+          inviteToken: invite?.token || undefined,
         }),
       });
 
@@ -376,6 +419,32 @@ export default function RegistrationPage() {
           Please complete the form below to register for the conference.
         </p>
 
+        {invite && (
+          <div className="mb-8 bg-green-50 border border-green-200 p-5 rounded-xl flex items-start gap-3">
+            <Gift className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-green-800">
+                Special Invitation
+              </h3>
+              <p className="text-sm text-green-700 mt-1">
+                You have been personally invited by the CEO of Uthabiti Africa.
+                Your registration rate is locked at{" "}
+                <strong>${invite.amount} USD</strong>.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {inviteError && (
+          <div className="mb-8 bg-red-50 border border-red-200 p-5 rounded-xl">
+            <h3 className="font-semibold text-red-700">Invitation Link Issue</h3>
+            <p className="text-sm text-red-600 mt-1">
+              {inviteError} You can still register below at the standard rates,
+              or contact us for assistance.
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
           <FormSection
             title="Personal Details"
@@ -394,9 +463,14 @@ export default function RegistrationPage() {
               label="Email Address*"
               name="email"
               value={form.email}
-              onChange={handleChange}
+              onChange={invite ? () => {} : handleChange}
               type="email"
               error={errors.email}
+              helper={
+                invite
+                  ? "Your invitation is linked to this email address."
+                  : undefined
+              }
             />
             <FormInput
               placeholder="Phone Number"
@@ -579,8 +653,13 @@ export default function RegistrationPage() {
 
           <FormSection
             title="Registration & Payment"
-            description="Choose your registration phase and participant type."
+            description={
+              invite
+                ? "Your registration fee has been set by your invitation."
+                : "Choose your registration phase and participant type."
+            }
           >
+            {!invite && (
             <div className="md:col-span-2 bg-orange-50 border border-orange-200 p-6 rounded-xl shadow-sm flex flex-col md:flex-row items-start gap-4">
               <div className="flex-shrink-0">
                 <Info className="text-orange-600 w-8 h-8" />
@@ -605,7 +684,9 @@ export default function RegistrationPage() {
                 </ul>
               </div>
             </div>
+            )}
 
+            {!invite && (
             <FormSelect
               label="Registration Phase*"
               name="phase"
@@ -619,7 +700,9 @@ export default function RegistrationPage() {
               ]}
               error={errors.phase}
             />
+            )}
 
+            {!invite && (
             <FormSelect
               label="Registration Type*"
               name="type"
@@ -633,11 +716,28 @@ export default function RegistrationPage() {
               ]}
               error={errors.type}
             />
+            )}
 
             {fee && (
-              <div className="md:col-span-2 bg-orange-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-gray-600">Registration Fee</p>
-                <p className="text-2xl font-bold text-orange-600">${fee}</p>
+              <div
+                className={`md:col-span-2 p-4 rounded-lg text-center ${
+                  invite
+                    ? "bg-green-50 border border-green-200"
+                    : "bg-orange-50"
+                }`}
+              >
+                <p className="text-sm text-gray-600">
+                  {invite
+                    ? "Special Invitation Rate"
+                    : "Registration Fee"}
+                </p>
+                <p
+                  className={`text-2xl font-bold ${
+                    invite ? "text-green-600" : "text-orange-600"
+                  }`}
+                >
+                  ${fee}
+                </p>
               </div>
             )}
 

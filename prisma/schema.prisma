@@ -36,6 +36,11 @@ enum DocumentStatus {
   VOID
 }
 
+enum InviteStatus {
+  PENDING
+  USED
+}
+
 model event_tbl {
   event_id   BigInt   @id @default(autoincrement())
   name       String
@@ -152,6 +157,25 @@ model registration_document_tbl {
   @@index([type])
   @@index([status])
   @@index([issued_at])
+}
+
+model special_invite_tbl {
+  invite_id      BigInt       @id @default(autoincrement())
+  token          String       @unique
+  email          String
+  invited_name   String?
+  note           String?      @db.Text
+  amount         Float
+  currency       String       @default("USD")
+  status         InviteStatus @default(PENDING)
+  participant_id BigInt?
+  created_by     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
 }
 
 model NewsletterSubscriber {
