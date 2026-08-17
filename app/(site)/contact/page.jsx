@@ -214,11 +214,8 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold text-gray-900">Office Address</p>
                   <p className="text-gray-600">
-                    Africa Childcare Forum<br />
-                    c/o Collaborative Action for Childcare<br />
-                    Office #1, Overbay Apartments<br />
-                    OV1 Junction of Rhapta & Church Road<br />
-                    Westlands, Nairobi, Kenya
+                    Mwaka Estate, House 3431, Suna Close, Dagoretti Corner<br />
+                    P.O. Box 3493 City Square 00200 Nairobi, Kenya
                   </p>
                 </div>
               </div>

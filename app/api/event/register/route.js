@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { safeJson } from "@/lib/json";
 import { issueRegistrationInvoice } from "@/lib/documents/issueInvoice";
+import { FEES, isPhaseOpen, PHASE_LABELS } from "@/lib/documents/constants";
 
 export async function POST(req) {
   try {
@@ -62,6 +63,40 @@ export async function POST(req) {
       if (invite.email !== email.trim().toLowerCase()) {
         return Response.json(
           { error: "This invitation was issued for a different email address." },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (!invite) {
+      if (!phase || !FEES[phase]) {
+        return Response.json(
+          { error: "Please select a valid registration phase." },
+          { status: 400 }
+        );
+      }
+
+      if (!isPhaseOpen(phase)) {
+        const label = PHASE_LABELS[phase] || phase;
+        return Response.json(
+          {
+            error: `${label} registration is closed. Please choose a currently open registration phase.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const expectedAmount = FEES[phase]?.[type];
+      if (expectedAmount == null) {
+        return Response.json(
+          { error: "Please select a valid registration type." },
+          { status: 400 }
+        );
+      }
+
+      if (Number(amount) !== Number(expectedAmount)) {
+        return Response.json(
+          { error: "Registration fee does not match the selected phase and type." },
           { status: 400 }
         );
       }

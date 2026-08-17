@@ -11,7 +11,12 @@ import CheckboxGroup from "@/components/registration/CheckboxGroup";
 import RadioGroup from "@/components/registration/RadioGroup";
 import FormSection from "@/components/registration/FormSection";
 import ProgressSteps from "@/components/registration/ProgressSteps";
-import { FEES } from "@/lib/documents/constants";
+import {
+  FEES,
+  PHASE_WINDOWS,
+  getOpenPhases,
+  isPhaseOpen,
+} from "@/lib/documents/constants";
 
 const FIELD_ORDER = [
   "fullName",
@@ -59,6 +64,15 @@ export default function RegistrationPage() {
   // Special CEO invitation (via ?invite=TOKEN in the URL)
   const [invite, setInvite] = useState(null);
   const [inviteError, setInviteError] = useState("");
+  const openPhases = getOpenPhases();
+  const registrationOpen = openPhases.length > 0;
+
+  useEffect(() => {
+    if (!form.phase || invite) return;
+    if (!isPhaseOpen(form.phase)) {
+      setForm((prev) => ({ ...prev, phase: "" }));
+    }
+  }, [form.phase, invite]);
 
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get("invite");
@@ -123,8 +137,18 @@ export default function RegistrationPage() {
     if (!form.profession) newErrors.profession = "Profession is required";
     if (form.profession === "Other" && !form.otherProfession.trim())
       newErrors.otherProfession = "Please specify your profession";
-    if (!form.phase) newErrors.phase = "Registration phase is required";
-    if (!form.type) newErrors.type = "Registration type is required";
+    if (!invite) {
+      if (!registrationOpen) {
+        newErrors.phase = "Online registration is currently closed";
+      } else if (!form.phase) {
+        newErrors.phase = "Registration phase is required";
+      } else if (!isPhaseOpen(form.phase)) {
+        newErrors.phase =
+          "This registration phase has ended. Please select an open phase.";
+      }
+
+      if (!form.type) newErrors.type = "Registration type is required";
+    }
 
     if (!form.accessibility || form.accessibility.length === 0)
       newErrors.accessibility = "Select at least one accessibility option";
@@ -669,24 +693,38 @@ export default function RegistrationPage() {
                   Registration Timeline
                 </h3>
                 <ul className="space-y-2 text-gray-700 text-sm">
-                  <li className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-orange-600" />
-                    <span>Early Bird: Jan 15 – Mar 31, 2026</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-orange-600" />
-                    <span>Regular: Apr 1 – Jun 30, 2026</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-orange-600" />
-                    <span>Late / On-site: Jul 1 – Aug 10, 2026</span>
-                  </li>
+                  {Object.entries(PHASE_WINDOWS).map(([phaseKey, window]) => {
+                    const open = isPhaseOpen(phaseKey);
+                    return (
+                      <li key={phaseKey} className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-orange-600" />
+                        <span className={open ? "" : "text-gray-400 line-through"}>
+                          {window.label}
+                        </span>
+                        <span
+                          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                            open
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {open ? "Open" : "Closed"}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
+                {!registrationOpen && (
+                  <p className="mt-3 text-sm font-medium text-red-600">
+                    Online registration is closed for all published phases.
+                    Please contact support if you need assistance.
+                  </p>
+                )}
               </div>
             </div>
             )}
 
-            {!invite && (
+            {!invite && registrationOpen && (
             <FormSelect
               label="Registration Phase*"
               name="phase"
@@ -694,15 +732,21 @@ export default function RegistrationPage() {
               onChange={handleChange}
               options={[
                 { label: "- Select phase -", value: "" },
-                { label: "Early Bird", value: "EarlyBird" },
-                { label: "Regular", value: "Regular" },
-                { label: "Late / On-site", value: "LateOnsite" },
+                ...openPhases.map((phaseKey) => ({
+                  label:
+                    phaseKey === "EarlyBird"
+                      ? "Early Bird"
+                      : phaseKey === "LateOnsite"
+                        ? "Late / On-site"
+                        : "Regular",
+                  value: phaseKey,
+                })),
               ]}
               error={errors.phase}
             />
             )}
 
-            {!invite && (
+            {!invite && registrationOpen && (
             <FormSelect
               label="Registration Type*"
               name="type"
@@ -744,14 +788,16 @@ export default function RegistrationPage() {
             <div className="md:col-span-2">
               <button
                 type="submit"
-                disabled={submit}
-                className="w-full bg-orange-600 text-white py-3 rounded-lg font-medium hover:bg-orange-700 transition flex justify-center items-center gap-2 disabled:opacity-60 cursor-pointer"
+                disabled={submit || (!invite && !registrationOpen)}
+                className="w-full bg-orange-600 text-white py-3 rounded-lg font-medium hover:bg-orange-700 transition flex justify-center items-center gap-2 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
               >
                 {submit ? (
                   <>
                     <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                     Submitting...
                   </>
+                ) : !invite && !registrationOpen ? (
+                  "Registration Closed"
                 ) : (
                   "Submit Registration"
                 )}

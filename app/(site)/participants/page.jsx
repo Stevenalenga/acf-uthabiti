@@ -16,6 +16,8 @@ import {
   LogOut,
   Filter,
   X,
+  Mail,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -58,6 +60,8 @@ export default function ParticipantsPage() {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [searchInput, setSearchInput] = useState("");
   const [expandedId, setExpandedId] = useState(null);
+  const [exporting, setExporting] = useState(null);
+  const [resendingId, setResendingId] = useState(null);
 
   const activeFilterCount = useMemo(
     () => Object.values(filters).filter(Boolean).length,
@@ -128,58 +132,68 @@ export default function ParticipantsPage() {
     setFilters(EMPTY_FILTERS);
   };
 
-  const exportCsv = () => {
-    if (!data.length) {
-      showToast({ type: "info", message: "No data to export on this page" });
-      return;
+  const buildFilterQuery = () =>
+    new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, value]) => value))
+    );
+
+  const exportParticipants = async (format) => {
+    try {
+      setExporting(format);
+      const query = buildFilterQuery();
+      query.set("format", format);
+
+      const res = await fetch(`/api/admin/participants?${query}`);
+      if (!res.ok) {
+        const result = await res.json().catch(() => ({}));
+        throw new Error(result.error || `Failed to export ${format.toUpperCase()}`);
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") || "";
+      const match = disposition.match(/filename="?([^"]+)"?/i);
+      const filename =
+        match?.[1] ||
+        `acf-participants.${format === "csv" ? "csv" : "xlsx"}`;
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      showToast({
+        type: "success",
+        message: `Downloaded ${format === "csv" ? "CSV" : "Excel"} export`,
+      });
+    } catch (error) {
+      showToast({ type: "error", message: error.message });
+    } finally {
+      setExporting(null);
     }
+  };
 
-    const headers = [
-      "Name",
-      "Email",
-      "Phone",
-      "Organization",
-      "Country",
-      "Event",
-      "Phase",
-      "Type",
-      "Amount",
-      "Payment Status",
-      "Payment Reference",
-      "Registered",
-    ];
+  const resendInvoice = async (participantId) => {
+    try {
+      setResendingId(participantId);
+      const res = await fetch(
+        `/api/admin/participants/${participantId}/resend-invoice`,
+        { method: "POST" }
+      );
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Failed to resend invoice");
 
-    const rows = data.map((p) => {
-      const payment = p.payments?.[0];
-      return [
-        p.full_name,
-        p.email,
-        p.phone,
-        p.organization,
-        p.country,
-        p.event?.name || "",
-        PHASE_LABELS[p.phase] || p.phase,
-        TYPE_LABELS[p.type] || p.type,
-        payment?.amount ?? "",
-        payment?.status ?? "",
-        payment?.payment_reference ?? "",
-        p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "",
-      ];
-    });
-
-    const csv = [headers, ...rows]
-      .map((row) =>
-        row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")
-      )
-      .join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `acf-participants-page-${meta.page}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+      showToast({
+        type: "success",
+        message: result.message || "Invoice email resent",
+      });
+      fetchParticipants(meta.page);
+    } catch (error) {
+      showToast({ type: "error", message: error.message });
+    } finally {
+      setResendingId(null);
+    }
   };
 
   if (!authorized) {
@@ -204,7 +218,7 @@ export default function ParticipantsPage() {
             onChange={(e) => setPin(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleUnlock()}
             placeholder="4-digit PIN"
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-4 text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 px-4 py-3 mb-4 text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500 [color-scheme:light]"
           />
 
           <button
@@ -245,11 +259,20 @@ export default function ParticipantsPage() {
               Refresh
             </button>
             <button
-              onClick={exportCsv}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium hover:bg-gray-50 cursor-pointer"
+              onClick={() => exportParticipants("csv")}
+              disabled={!!exporting || stats.total === 0}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium hover:bg-gray-50 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
-              <Download className="h-4 w-4" />
-              Export CSV
+              <Download className={`h-4 w-4 ${exporting === "csv" ? "animate-pulse" : ""}`} />
+              {exporting === "csv" ? "Exporting…" : "Export CSV"}
+            </button>
+            <button
+              onClick={() => exportParticipants("xlsx")}
+              disabled={!!exporting || stats.total === 0}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium hover:bg-gray-50 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            >
+              <FileSpreadsheet className={`h-4 w-4 ${exporting === "xlsx" ? "animate-pulse" : ""}`} />
+              {exporting === "xlsx" ? "Exporting…" : "Export Excel"}
             </button>
             <button
               onClick={handleLogout}
@@ -297,12 +320,12 @@ export default function ParticipantsPage() {
           <div className="p-4 sm:p-5 space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                 <input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search by name, email, organization, or phone..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 text-sm leading-normal focus:outline-none focus:ring-2 focus:ring-orange-500 [color-scheme:light]"
                 />
               </div>
               <input
@@ -311,7 +334,7 @@ export default function ParticipantsPage() {
                   setFilters((f) => ({ ...f, eventId: e.target.value }))
                 }
                 placeholder="Event ID (optional)"
-                className="w-full sm:w-44 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full sm:w-44 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2.5 text-sm leading-normal focus:outline-none focus:ring-2 focus:ring-orange-500 [color-scheme:light]"
               />
             </div>
 
@@ -380,6 +403,7 @@ export default function ParticipantsPage() {
                   <th className="p-4 font-semibold hidden lg:table-cell">Type</th>
                   <th className="p-4 font-semibold">Payment</th>
                   <th className="p-4 font-semibold hidden xl:table-cell">Documents</th>
+                  <th className="p-4 font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -387,7 +411,7 @@ export default function ParticipantsPage() {
                   [...Array(8)].map((_, i) => <SkeletonRow key={i} />)
                 ) : data.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-16 text-gray-500">
+                    <td colSpan={9} className="text-center py-16 text-gray-500">
                       <Users className="h-10 w-10 mx-auto text-gray-300 mb-3" />
                       <p className="font-medium">No participants found</p>
                       <p className="text-sm mt-1">Try adjusting your search or filters</p>
@@ -411,6 +435,8 @@ export default function ParticipantsPage() {
                         onToggle={() =>
                           setExpandedId(isExpanded ? null : p.participant_id)
                         }
+                        onResendInvoice={() => resendInvoice(p.participant_id)}
+                        resending={resendingId === p.participant_id}
                       />
                     );
                   })
@@ -454,6 +480,8 @@ function ParticipantRow({
   receipt,
   isExpanded,
   onToggle,
+  onResendInvoice,
+  resending,
 }) {
   const status = payment?.status || "PENDING";
 
@@ -498,16 +526,34 @@ function ParticipantRow({
         <td className="p-4 hidden xl:table-cell" onClick={(e) => e.stopPropagation()}>
           <DocumentLinks invoice={invoice} receipt={receipt} />
         </td>
+        <td className="p-4" onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={onResendInvoice}
+            disabled={resending || !payment}
+            title={
+              payment
+                ? "Resend invoice email to participant"
+                : "No payment record to invoice"
+            }
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-xs font-semibold hover:bg-orange-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <Mail className={`h-3.5 w-3.5 ${resending ? "animate-pulse" : ""}`} />
+            {resending ? "Sending…" : "Resend Invoice"}
+          </button>
+        </td>
       </tr>
 
       {isExpanded && (
         <tr className="bg-orange-50/30 border-b border-gray-100">
-          <td colSpan={8} className="p-4 sm:p-6">
+          <td colSpan={9} className="p-4 sm:p-6">
             <ExpandedDetails
               participant={p}
               payment={payment}
               invoice={invoice}
               receipt={receipt}
+              onResendInvoice={onResendInvoice}
+              resending={resending}
             />
           </td>
         </tr>
@@ -516,7 +562,14 @@ function ParticipantRow({
   );
 }
 
-function ExpandedDetails({ participant: p, payment, invoice, receipt }) {
+function ExpandedDetails({
+  participant: p,
+  payment,
+  invoice,
+  receipt,
+  onResendInvoice,
+  resending,
+}) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
       <DetailGroup title="Contact">
@@ -573,6 +626,15 @@ function ExpandedDetails({ participant: p, payment, invoice, receipt }) {
         {receipt && (
           <DetailItem label="Receipt No." value={receipt.document_number} />
         )}
+        <button
+          type="button"
+          onClick={onResendInvoice}
+          disabled={resending || !payment}
+          className="mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-orange-200 bg-white text-orange-700 text-sm font-medium hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          <Mail className={`h-4 w-4 ${resending ? "animate-pulse" : ""}`} />
+          {resending ? "Resending invoice…" : "Resend invoice email"}
+        </button>
       </DetailGroup>
     </div>
   );
@@ -694,7 +756,7 @@ function StatCard({ icon: Icon, label, value, tone }) {
 function SkeletonRow() {
   return (
     <tr className="border-b border-gray-100 animate-pulse">
-      {[...Array(8)].map((_, i) => (
+      {[...Array(9)].map((_, i) => (
         <td key={i} className="p-4">
           <div className="h-4 bg-gray-200 rounded w-full max-w-[120px]" />
         </td>
