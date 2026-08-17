@@ -1,4 +1,5 @@
 import Navbar from "@/components/layouts/Header";
+import Footer from "@/components/layouts/Footer";
 
 export const metadata = {
   title: "Africa Childcare Forum",
@@ -9,7 +10,8 @@ export default function SiteLayout({ children }) {
   return (
     <>
       <Navbar />
-        {children}
+      {children}
+      <Footer />
     </>
   );
 }
