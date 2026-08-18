@@ -15,9 +15,11 @@ import {
 export default function VenuePage() {
 
   const hotels = [
+    "PrideInn Flamingo Beach Resort & Spa",
+    "PrideInn Paradise Beach Resort & Spa",
     "Serena Beach Resort & Spa",
     "Sarova Whitesands Beach Resort & Spa",
-    "Voyager Beach Resort"
+    "Voyager Beach Resort",
   ];
 
   const attractions = [
@@ -46,7 +48,7 @@ export default function VenuePage() {
           </h1>
 
           <p className="text-lg text-gray-200">
-            PrideInn Paradise Beach Resort & Spa  
+            PrideInn Flamingo Beach Resort & Spa  
             <br />
             Mombasa, Kenya
           </p>
@@ -60,13 +62,13 @@ export default function VenuePage() {
         <div className="max-w-5xl mx-auto px-6 text-center">
 
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            PrideInn Paradise Beach Resort & Spa
+            PrideInn Flamingo Beach Resort & Spa
           </h2>
 
           <p className="text-lg text-gray-600 leading-relaxed">
             The Africa Childcare Forum 2026 will take place at the
-            <strong> PrideInn Paradise Beach Resort & Spa</strong>,
-            located along the scenic Shanzu Beach on Kenya’s North Coast.
+            <strong> PrideInn Flamingo Beach Resort & Spa</strong>,
+            Mombasa, Kenya.
           </p>
 
           <p className="text-gray-600 mt-6 leading-relaxed">
@@ -83,6 +85,32 @@ export default function VenuePage() {
             focused on advancing childcare systems and Early Childhood
             Development across Africa.
           </p>
+
+          <div className="mt-10 rounded-2xl bg-[#FFF4F0] border border-orange-100 p-8 text-left max-w-3xl mx-auto">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
+              Suggested Accommodation
+            </h3>
+            <ul className="text-gray-700 space-y-2 mb-4">
+              <li>
+                <strong>PrideInn Flamingo Beach Resort & Spa</strong> — venue
+                hotel and recommended stay option
+              </li>
+              <li>
+                <strong>PrideInn Paradise Beach Resort & Spa</strong> —
+                alternative stay option in Mombasa
+              </li>
+            </ul>
+            <p className="text-gray-600 mb-5">
+              Need help with bookings? Contact us and we can arrange
+              accommodation for you.
+            </p>
+            <a
+              href="/contact"
+              className="inline-flex bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#cc4a35] transition"
+            >
+              Contact us to arrange accommodation
+            </a>
+          </div>
 
         </div>
 
@@ -169,12 +197,22 @@ export default function VenuePage() {
             </h2>
           </div>
 
-          <p className="text-gray-600 text-center max-w-3xl mx-auto mb-10">
-            Participants are encouraged to stay at the
-            PrideInn Paradise Beach Resort & Spa, the official
-            venue for the forum. A limited number of rooms will
-            be reserved at special conference rates.
+          <p className="text-gray-600 text-center max-w-3xl mx-auto mb-6">
+            Suggested stays include
+            <strong> PrideInn Flamingo Beach Resort & Spa</strong> (venue hotel)
+            and <strong> PrideInn Paradise Beach Resort & Spa</strong>.
+            Additional nearby options are listed below. Contact us if you would
+            like help arranging accommodation.
           </p>
+
+          <div className="text-center mb-10">
+            <a
+              href="/contact"
+              className="inline-flex bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#cc4a35] transition"
+            >
+              Contact us to arrange accommodation
+            </a>
+          </div>
 
           <div className="grid md:grid-cols-3 gap-6">
 

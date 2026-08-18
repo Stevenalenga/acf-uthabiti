@@ -16,6 +16,11 @@ import {
   PHASE_WINDOWS,
   getOpenPhases,
   isPhaseOpen,
+  isPromoActive,
+  getRegistrationFee,
+  getStandardFee,
+  formatPromoEndDate,
+  PROMO_DISCOUNT,
 } from "@/lib/documents/constants";
 
 const FIELD_ORDER = [
@@ -163,11 +168,23 @@ export default function RegistrationPage() {
     return { valid: Object.keys(newErrors).length === 0, newErrors };
   };
 
+  const promoActive = isPromoActive();
+  const promoEnds = formatPromoEndDate();
+
+  const standardFee =
+    !invite && form.phase && form.type
+      ? getStandardFee(form.phase, form.type)
+      : null;
   const fee = invite
     ? invite.amount
     : form.phase && form.type
-      ? FEES[form.phase]?.[form.type]
+      ? getRegistrationFee(form.phase, form.type)
       : null;
+  const feeIsDiscounted =
+    promoActive &&
+    fee != null &&
+    standardFee != null &&
+    Number(fee) < Number(standardFee);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -724,6 +741,41 @@ export default function RegistrationPage() {
             </div>
             )}
 
+            {!invite && promoActive && registrationOpen && (
+              <div className="md:col-span-2 bg-green-50 border border-green-200 p-5 rounded-xl flex flex-col sm:flex-row gap-4 items-start">
+                <div className="flex-shrink-0">
+                  <Gift className="text-green-600 w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-green-800 mb-1">
+                    Limited-time registration discount
+                  </h3>
+                  <p className="text-sm text-green-900/80 mb-3">
+                    Available now through <strong>{promoEnds}</strong>. After
+                    this date, standard late registration fees apply.
+                  </p>
+                  <ul className="text-sm text-green-900 space-y-1">
+                    <li>
+                      East Africa participants:{" "}
+                      <strong>${PROMO_DISCOUNT.fees.eastAfrica} USD</strong>
+                      <span className="text-green-700/70">
+                        {" "}
+                        (was ${FEES.LateOnsite.eastAfrica})
+                      </span>
+                    </li>
+                    <li>
+                      International participants:{" "}
+                      <strong>${PROMO_DISCOUNT.fees.other} USD</strong>
+                      <span className="text-green-700/70">
+                        {" "}
+                        (was ${FEES.LateOnsite.other})
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
             {!invite && registrationOpen && (
             <FormSelect
               label="Registration Phase*"
@@ -767,21 +819,37 @@ export default function RegistrationPage() {
                 className={`md:col-span-2 p-4 rounded-lg text-center ${
                   invite
                     ? "bg-green-50 border border-green-200"
-                    : "bg-orange-50"
+                    : feeIsDiscounted
+                      ? "bg-green-50 border border-green-200"
+                      : "bg-orange-50"
                 }`}
               >
                 <p className="text-sm text-gray-600">
                   {invite
                     ? "Special Invitation Rate"
-                    : "Registration Fee"}
+                    : feeIsDiscounted
+                      ? "Discounted Registration Fee"
+                      : "Registration Fee"}
                 </p>
                 <p
                   className={`text-2xl font-bold ${
-                    invite ? "text-green-600" : "text-orange-600"
+                    invite || feeIsDiscounted
+                      ? "text-green-600"
+                      : "text-orange-600"
                   }`}
                 >
+                  {feeIsDiscounted && (
+                    <span className="mr-3 text-lg text-gray-400 line-through font-medium">
+                      ${standardFee}
+                    </span>
+                  )}
                   ${fee}
                 </p>
+                {feeIsDiscounted && (
+                  <p className="text-xs text-green-700 mt-1">
+                    Offer ends {promoEnds}
+                  </p>
+                )}
               </div>
             )}
 

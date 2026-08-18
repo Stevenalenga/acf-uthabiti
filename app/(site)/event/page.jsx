@@ -65,7 +65,7 @@ export default function ACFKigali2025Page() {
 
             <div className="flex items-center gap-2">
               <Users />
-              450 Participants
+              120 Participants
             </div>
 
           </div>
@@ -103,19 +103,19 @@ export default function ACFKigali2025Page() {
 
             <div className="bg-white p-8 rounded-xl text-center shadow">
               <Users className="mx-auto text-[#E5553C] mb-4" size={36}/>
-              <p className="text-4xl font-bold">450+</p>
+              <p className="text-4xl font-bold">120</p>
               <p className="text-gray-600">Participants</p>
             </div>
 
             <div className="bg-white p-8 rounded-xl text-center shadow">
               <Globe className="mx-auto text-[#E5553C] mb-4" size={36}/>
-              <p className="text-4xl font-bold">30+</p>
+              <p className="text-4xl font-bold">13</p>
               <p className="text-gray-600">Countries Represented</p>
             </div>
 
             <div className="bg-white p-8 rounded-xl text-center shadow">
               <Mic className="mx-auto text-[#E5553C] mb-4" size={36}/>
-              <p className="text-4xl font-bold">70+</p>
+              <p className="text-4xl font-bold">30+</p>
               <p className="text-gray-600">Speakers</p>
             </div>
 

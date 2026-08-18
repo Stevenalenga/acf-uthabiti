@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { safeJson } from "@/lib/json";
 import { issueRegistrationInvoice } from "@/lib/documents/issueInvoice";
-import { FEES, isPhaseOpen, PHASE_LABELS } from "@/lib/documents/constants";
+import {
+  FEES,
+  isPhaseOpen,
+  PHASE_LABELS,
+  getRegistrationFee,
+} from "@/lib/documents/constants";
 
 export async function POST(req) {
   try {
@@ -86,7 +91,7 @@ export async function POST(req) {
         );
       }
 
-      const expectedAmount = FEES[phase]?.[type];
+      const expectedAmount = getRegistrationFee(phase, type);
       if (expectedAmount == null) {
         return Response.json(
           { error: "Please select a valid registration type." },

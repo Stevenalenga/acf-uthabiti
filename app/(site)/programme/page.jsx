@@ -62,7 +62,7 @@ export default function ProgrammePage() {
       <section
         className="relative h-[420px] flex items-center justify-center text-center text-white"
         style={{
-          backgroundImage: "url('/images/acf-poster-2.jpeg')",
+          backgroundImage: "url('/images/acf-poster-mombasa-2026.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}

@@ -9,6 +9,11 @@ import Countdown from "@/components/ui/CountDown";
 import StatCounter from "@/components/ui/StatCounter";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import {
+  isPromoActive,
+  PROMO_DISCOUNT,
+  formatPromoEndDate,
+} from "@/lib/documents/constants";
 
 const container = {
   hidden: {},
@@ -28,6 +33,8 @@ export default function HomePage() {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const promoActive = isPromoActive();
+  const promoEnds = formatPromoEndDate();
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
@@ -100,12 +107,16 @@ export default function HomePage() {
                 and inclusive childcare systems across Africa.
               </p>
 
-              <div className="mt-4 flex items-center gap-2 text-gray-700 font-medium">
-                <MapPin size={16} className="text-[#E5553C]"/>
-                <span>PrideInn Paradise Hotel</span>
-                <span className="mx-2">|</span>
-                <Calendar size={16} className="text-[#E5553C]"/>
-                <span>13 – 15 October 2026</span>
+              <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 text-gray-700 font-medium">
+                <span className="inline-flex items-center gap-2">
+                  <MapPin size={16} className="text-[#E5553C]"/>
+                  PrideInn Flamingo Beach Resort & Spa, Mombasa
+                </span>
+                <span className="hidden sm:inline mx-1">|</span>
+                <span className="inline-flex items-center gap-2">
+                  <Calendar size={16} className="text-[#E5553C]"/>
+                  13 – 15 October 2026
+                </span>
               </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -122,6 +133,22 @@ export default function HomePage() {
                   Learn More
                 </a>
               </div>
+
+              {promoActive && (
+                <div className="mt-6 max-w-xl rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-left">
+                  <p className="text-sm font-semibold text-green-800">
+                    Limited-time registration discount
+                  </p>
+                  <p className="mt-1 text-sm text-green-900/80">
+                    East Africa <strong>${PROMO_DISCOUNT.fees.eastAfrica} USD</strong>
+                    {" · "}
+                    International <strong>${PROMO_DISCOUNT.fees.other} USD</strong>
+                  </p>
+                  <p className="mt-1 text-xs text-green-700">
+                    Offer ends {promoEnds}. Standard fees apply after this date.
+                  </p>
+                </div>
+              )}
 
               {/* STATS */}
               <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
@@ -141,14 +168,14 @@ export default function HomePage() {
             </div>
 
             {/* RIGHT VISUAL */}
-            <div className="relative flex justify-center">
+            <div className="relative flex flex-col items-center gap-6">
               <div className="absolute -z-10 w-72 h-72 bg-[#E5553C]/20 blur-3xl rounded-full"></div>
               <img
-                src="/images/acf-poster-11.jpeg"
-                alt="Africa Childcare Forum Poster"
-                className="rounded-2xl shadow-2xl w-full max-w-md animate-float"
+                src="/images/acf-poster-mombasa-home.jpg"
+                alt="Africa Childcare Forum Mombasa 2026 – Uniting for Care"
+                className="rounded-2xl shadow-2xl w-full max-w-md object-cover"
               />
-              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-white shadow-xl rounded-2xl px-6 py-5 w-[90%] max-w-sm">
+              <div className="bg-white shadow-xl rounded-2xl px-6 py-5 w-full max-w-sm">
                 <p className="text-center text-sm text-gray-500 font-semibold mb-3">
                   Event Starts In
                 </p>
@@ -274,10 +301,10 @@ export default function HomePage() {
               </h3>
 
               <p className="text-gray-600 max-w-xl">
-                The Africa Childcare Forum 2026 will take place at 
-                <strong> PrideInn Paradise Beach Resort & Spa</strong>, 
-                one of Kenya’s premier conference destinations located along 
-                the stunning Mombasa coastline.
+                The Africa Childcare Forum 2026 will take place at
+                <strong> PrideInn Flamingo Beach Resort & Spa</strong>,
+                Mombasa, Kenya — a premier coastal destination for dialogue,
+                learning, and networking.
               </p>
             </div>
 
@@ -288,6 +315,60 @@ export default function HomePage() {
               View Venue Details
             </a>
 
+          </motion.div>
+
+          {/* Accommodation */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="mt-8 bg-white border border-orange-100 rounded-2xl p-10 shadow-sm"
+          >
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              Suggested Accommodation
+            </h3>
+            <p className="text-gray-600 max-w-3xl mb-6">
+              Participants can stay at either of these PrideInn properties in
+              Mombasa. Prefer help booking? Contact us and we can arrange
+              accommodation for you.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-4 mb-6">
+              <div className="rounded-xl bg-[#FFF4F0] border border-orange-100 p-5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#E5553C] mb-1">
+                  Venue & stay option
+                </p>
+                <p className="font-semibold text-gray-900">
+                  PrideInn Flamingo Beach Resort & Spa
+                </p>
+                <p className="text-sm text-gray-600 mt-1">Mombasa, Kenya</p>
+              </div>
+              <div className="rounded-xl bg-[#FFF4F0] border border-orange-100 p-5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#E5553C] mb-1">
+                  Alternative stay option
+                </p>
+                <p className="font-semibold text-gray-900">
+                  PrideInn Paradise Beach Resort & Spa
+                </p>
+                <p className="text-sm text-gray-600 mt-1">Mombasa, Kenya</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="/contact"
+                className="inline-flex items-center justify-center bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#cc4a35] transition"
+              >
+                Contact us to arrange accommodation
+              </a>
+              <a
+                href="/venue"
+                className="inline-flex items-center justify-center border border-[#E5553C] text-[#E5553C] px-6 py-3 rounded-lg font-semibold hover:bg-[#FFF4F0] transition"
+              >
+                More travel details
+              </a>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -958,7 +1039,7 @@ export default function HomePage() {
 
               <div className="flex items-center gap-2">
                 <MapPin className="text-[#E5553C]" size={20}/>
-                PrideInn Paradise, Mombasa
+                PrideInn Flamingo, Mombasa
               </div>
 
               <div className="flex items-center gap-2">
@@ -1338,6 +1419,19 @@ export default function HomePage() {
               <p className="mb-6 text-lg sm:text-xl">
                 Click below to register and be part of Africa’s leading childcare forum.
               </p>
+              {promoActive && (
+                <div className="mb-6 rounded-xl bg-white/15 border border-white/30 px-5 py-4 text-left">
+                  <p className="font-semibold">Limited-time discount</p>
+                  <p className="mt-1 text-sm text-white/90">
+                    East Africa participants: ${PROMO_DISCOUNT.fees.eastAfrica} USD
+                    {" · "}
+                    International participants: ${PROMO_DISCOUNT.fees.other} USD
+                  </p>
+                  <p className="mt-1 text-xs text-white/80">
+                    Ends {promoEnds}. After that, standard registration fees apply.
+                  </p>
+                </div>
+              )}
               <a
                 href="/event-register"
                 className="inline-block bg-white text-[#E5553C] font-semibold py-4 px-8 rounded-lg shadow-lg hover:bg-[#FFECEA] transition-colors"
