@@ -33,7 +33,11 @@ export async function POST(req) {
       emergencyContact,
       amount,
       inviteToken,
+      invoiceCurrency,
     } = body;
+
+    const chosenInvoiceCurrency =
+      String(invoiceCurrency || "USD").toUpperCase() === "KES" ? "KES" : "USD";
 
     if (!email?.trim() || !fullName?.trim()) {
       return Response.json(
@@ -153,10 +157,13 @@ export async function POST(req) {
 
         if (existingPayment.status !== "SUCCESS") {
           try {
+            // PDF is prepared here; email is sent in the background from the client.
             const invoice = await issueRegistrationInvoice({
               participant: existingParticipant,
               payment: existingPayment,
               eventId: event.event_id,
+              currency: chosenInvoiceCurrency,
+              skipEmail: true,
             });
             invoiceNumber = invoice?.document_number || invoiceNumber;
           } catch (docError) {
@@ -202,6 +209,8 @@ export async function POST(req) {
           participant: existingParticipant,
           payment: resumedPayment,
           eventId: event.event_id,
+          currency: chosenInvoiceCurrency,
+          skipEmail: true,
         });
         invoiceNumber = invoice?.document_number || null;
   } catch (docError) {
@@ -278,6 +287,8 @@ export async function POST(req) {
         participant,
         payment,
         eventId: event.event_id,
+        currency: chosenInvoiceCurrency,
+        skipEmail: true,
       });
       invoiceNumber = invoice?.document_number || null;
     } catch (docError) {

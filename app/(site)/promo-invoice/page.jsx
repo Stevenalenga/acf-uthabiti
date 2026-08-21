@@ -13,6 +13,7 @@ export default function PromoInvoicePage() {
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
+  const [currency, setCurrency] = useState("USD");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const promoActive = isPromoActive();
@@ -41,7 +42,7 @@ export default function PromoInvoicePage() {
       const res = await fetch("/api/promo/claim-invoice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
+        body: JSON.stringify({ email, code, currency }),
       });
       const data = await res.json();
 
@@ -113,7 +114,9 @@ export default function PromoInvoicePage() {
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-gray-500">New amount</dt>
-                  <dd className="font-medium text-gray-900">${result.amount} USD</dd>
+                  <dd className="font-medium text-gray-900">
+                    {result.amountLabel || `$${result.amount} USD`}
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-gray-500">Invoice</dt>
@@ -162,6 +165,45 @@ export default function PromoInvoicePage() {
                     disabled={!promoActive || submitting}
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-orange-500 [color-scheme:light] disabled:opacity-60"
                   />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1">
+                  Registration currency*
+                </label>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { value: "USD", label: "Register in USD" },
+                    { value: "KES", label: "Register in Kenyan Shillings" },
+                  ].map((option) => {
+                    const selected = currency === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        disabled={!promoActive || submitting}
+                        onClick={() => setCurrency(option.value)}
+                        className={`flex items-center gap-3 w-full rounded-lg border px-4 py-3 text-left text-sm transition cursor-pointer disabled:opacity-60 ${
+                          selected
+                            ? "border-orange-600 bg-orange-50 text-orange-900"
+                            : "border-gray-300 bg-white text-gray-800"
+                        }`}
+                      >
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-bold ${
+                            selected
+                              ? "border-orange-600 bg-orange-600 text-white"
+                              : "border-gray-400 bg-white"
+                          }`}
+                          aria-hidden
+                        >
+                          {selected ? "✓" : ""}
+                        </span>
+                        {option.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

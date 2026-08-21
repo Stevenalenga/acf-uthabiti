@@ -7,9 +7,11 @@ import {
 import {
   TYPE_LABELS,
   formatPromoEndDate,
+  formatInvoiceAmount,
   getPromoClaimFee,
   isPromoActive,
   isValidPromoClaimCode,
+  convertUsdToKes,
 } from "@/lib/documents/constants";
 
 export async function POST(req) {
@@ -28,6 +30,8 @@ export async function POST(req) {
       .trim()
       .toLowerCase();
     const code = String(body.code || "").trim();
+    const invoiceCurrency =
+      String(body.currency || "USD").toUpperCase() === "KES" ? "KES" : "USD";
 
     if (!email || !email.includes("@")) {
       return Response.json(
@@ -94,10 +98,10 @@ export async function POST(req) {
         );
       }
 
-      return applyPromoToParticipant(matched, event.event_id);
+      return applyPromoToParticipant(matched, event.event_id, invoiceCurrency);
     }
 
-    return applyPromoToParticipant(participant, event.event_id);
+    return applyPromoToParticipant(participant, event.event_id, invoiceCurrency);
   } catch (error) {
     console.error("Promo claim failed:", error);
     return Response.json(
@@ -107,7 +111,7 @@ export async function POST(req) {
   }
 }
 
-async function applyPromoToParticipant(participant, eventId) {
+async function applyPromoToParticipant(participant, eventId, invoiceCurrency = "USD") {
   const payment = participant.payments?.[0];
 
   if (!payment) {
@@ -171,6 +175,7 @@ async function applyPromoToParticipant(participant, eventId) {
     participant,
     payment: updatedPayment,
     eventId,
+    currency: invoiceCurrency,
     skipEmail: true,
   });
 
@@ -180,11 +185,15 @@ async function applyPromoToParticipant(participant, eventId) {
     document: invoice,
   });
 
+  const amountLabel = formatInvoiceAmount(invoice.amount, invoice.currency);
+
   if (!sent) {
     return Response.json(
       {
         error: `Your fee was updated to $${promoAmount}, but the invoice email failed to send. Please contact support.`,
         amount: promoAmount,
+        amountLabel,
+        currency: invoice.currency,
         invoiceNumber: invoice.document_number,
       },
       { status: 502 }
@@ -194,8 +203,12 @@ async function applyPromoToParticipant(participant, eventId) {
   return Response.json(
     safeJson({
       success: true,
-      message: `A new invoice for $${promoAmount} USD has been emailed to ${participant.email}.`,
+      message: `A new ${invoice.currency} invoice for ${amountLabel} has been emailed to ${participant.email}.`,
       amount: promoAmount,
+      invoiceAmount: invoice.amount,
+      amountLabel,
+      currency: invoice.currency,
+      kesAmount: convertUsdToKes(promoAmount),
       type: TYPE_LABELS[participant.type] || participant.type,
       invoiceNumber: invoice.document_number,
       email: participant.email,

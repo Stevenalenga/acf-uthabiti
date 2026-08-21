@@ -37,12 +37,14 @@ const FIELD_ORDER = [
   "reportConsent",
   "phase",
   "type",
+  "invoiceCurrency",
 ];
 
 export default function RegistrationPage() {
   const [step, setStep] = useState("registration");
   const { showToast } = useToast();
   const [submit, setSubmit] = useState(false);
+  const [invoiceBusy, setInvoiceBusy] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -54,6 +56,7 @@ export default function RegistrationPage() {
     visaInfo: "",
     phase: "",
     type: "",
+    invoiceCurrency: "",
     accessibility: [],
     otherAccessibility: "",
     requiredTranslation: "",
@@ -163,6 +166,8 @@ export default function RegistrationPage() {
 
     if (!form.mediaConsent) newErrors.mediaConsent = "Please choose one option";
     if (!form.reportConsent) newErrors.reportConsent = "Please choose one option";
+    if (!form.invoiceCurrency)
+      newErrors.invoiceCurrency = "Select a registration currency";
 
     setErrors(newErrors);
     return { valid: Object.keys(newErrors).length === 0, newErrors };
@@ -210,6 +215,7 @@ export default function RegistrationPage() {
         body: JSON.stringify({
           ...form,
           amount: fee,
+          invoiceCurrency: form.invoiceCurrency,
           inviteToken: invite?.token || undefined,
         }),
       });
@@ -230,6 +236,9 @@ export default function RegistrationPage() {
         window.location.href = `/payment-success?reference=${data.reference}`;
         return;
       }
+
+      // Email selected invoice in the background; continue payment flow immediately.
+      emailInvoiceInBackground(form.invoiceCurrency, { silent: true });
 
       if (form.phase === "LateOnsite") {
         sessionStorage.removeItem("paymentInProgress");
@@ -263,7 +272,6 @@ export default function RegistrationPage() {
       }
 
       sessionStorage.setItem("paymentInProgress", "true");
-
       window.location.href = paymentData.authorization_url;
     } catch (error) {
       setStep("registration");
@@ -284,11 +292,46 @@ export default function RegistrationPage() {
     setStep("payment_retry");
   }, []);
 
+  const getStoredParticipantId = () =>
+    sessionStorage.getItem("participantId") ||
+    localStorage.getItem("participantId");
+
+  const emailInvoiceInBackground = (currency, { silent = false } = {}) => {
+    const participantId = getStoredParticipantId();
+    if (!participantId || !currency) return;
+
+    setInvoiceBusy(true);
+    fetch("/api/payment/invoice-currency", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ participantId, currency }),
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Could not send invoice");
+        if (!silent) {
+          showToast({
+            type: "success",
+            message: "Invoice sent to your email",
+          });
+        }
+      })
+      .catch((error) => {
+        if (!silent) {
+          showToast({
+            type: "error",
+            message: error.message || "Could not send invoice",
+          });
+        } else {
+          console.error("Background invoice email failed:", error);
+        }
+      })
+      .finally(() => setInvoiceBusy(false));
+  };
+
   const handleRetryPayment = async () => {
     try {
-      const participantId =
-        sessionStorage.getItem("participantId") ||
-        localStorage.getItem("participantId");
+      const participantId = getStoredParticipantId();
 
       if (!participantId) {
         showToast({ type: "error", message: "Session expired" });
@@ -398,7 +441,7 @@ export default function RegistrationPage() {
               retry or cancel your payment.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
               <button
                 type="button"
                 onClick={handleRetryPayment}
@@ -414,6 +457,51 @@ export default function RegistrationPage() {
               >
                 Cancel
               </button>
+            </div>
+
+            <div className="text-left border-t border-yellow-200 pt-6">
+              <p className="text-sm font-medium text-gray-800 mb-3 text-center">
+                Register in
+              </p>
+              <div className="flex flex-col gap-2">
+                {[
+                  { value: "USD", label: "Register in USD" },
+                  { value: "KES", label: "Register in Kenyan Shillings" },
+                ].map((option) => {
+                  const selected = form.invoiceCurrency === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      disabled={invoiceBusy}
+                      onClick={() => {
+                        setForm((prev) => ({
+                          ...prev,
+                          invoiceCurrency: option.value,
+                        }));
+                        emailInvoiceInBackground(option.value);
+                      }}
+                      className={`flex items-center gap-3 w-full rounded-lg border px-4 py-3 text-left text-sm transition disabled:opacity-60 cursor-pointer ${
+                        selected
+                          ? "border-orange-600 bg-orange-50 text-orange-900"
+                          : "border-gray-200 bg-white text-gray-800 hover:border-orange-300"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-5 w-5 items-center justify-center rounded border text-xs font-bold ${
+                          selected
+                            ? "border-orange-600 bg-orange-600 text-white"
+                            : "border-gray-400 bg-white"
+                        }`}
+                        aria-hidden
+                      >
+                        {selected ? "✓" : ""}
+                      </span>
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
@@ -437,7 +525,8 @@ export default function RegistrationPage() {
             </p>
 
             <p className="text-gray-700">
-              Payment will be completed onsite during conference check-in.
+              Payment will be completed onsite during conference check-in. Your
+              invoice has been sent to your email.
             </p>
 
             <p className="text-sm text-gray-500 mt-4">
@@ -852,6 +941,55 @@ export default function RegistrationPage() {
                 )}
               </div>
             )}
+
+            <div className="md:col-span-2" data-field="invoiceCurrency">
+              <p className="text-sm font-medium text-gray-900 mb-3">
+                Registration currency*
+              </p>
+              <div className="flex flex-col gap-2">
+                {[
+                  { value: "USD", label: "Register in USD" },
+                  { value: "KES", label: "Register in Kenyan Shillings" },
+                ].map((option) => {
+                  const selected = form.invoiceCurrency === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => {
+                        setForm((prev) => ({
+                          ...prev,
+                          invoiceCurrency: option.value,
+                        }));
+                        setErrors((prev) => ({ ...prev, invoiceCurrency: "" }));
+                      }}
+                      className={`flex items-center gap-3 w-full rounded-lg border px-4 py-3 text-left text-sm transition cursor-pointer ${
+                        selected
+                          ? "border-orange-600 bg-orange-50 text-orange-900"
+                          : "border-gray-200 bg-white text-gray-800 hover:border-orange-300"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-bold ${
+                          selected
+                            ? "border-orange-600 bg-orange-600 text-white"
+                            : "border-gray-400 bg-white"
+                        }`}
+                        aria-hidden
+                      >
+                        {selected ? "✓" : ""}
+                      </span>
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.invoiceCurrency && (
+                <p className="mt-2 text-sm text-red-600">
+                  {errors.invoiceCurrency}
+                </p>
+              )}
+            </div>
 
             <div className="md:col-span-2">
               <button

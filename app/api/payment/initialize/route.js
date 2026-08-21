@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { safeJson } from "@/lib/json";
 import crypto from "crypto";
+import { FAMILY_BANK_USD_TO_KES } from "@/lib/documents/constants";
 
 export async function POST(req) {
   try {
@@ -61,7 +62,8 @@ export async function POST(req) {
         body: JSON.stringify({
           email: participant.email,
 
-          amount: Number(payment.amount) * 129 * 100, // Paystack expects kobo/cents
+          // Charge in KES using Family Bank USD→KES rate (Paystack expects smallest unit)
+          amount: Math.round(Number(payment.amount) * FAMILY_BANK_USD_TO_KES * 100),
           currency: "KES",
 
           reference: reference,
