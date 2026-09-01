@@ -934,6 +934,9 @@ export default function RegistrationPage() {
                   )}
                   ${fee}
                 </p>
+                <p className="text-xs text-gray-600 mt-2">
+                  Accommodation not included in the price total
+                </p>
                 {feeIsDiscounted && (
                   <p className="text-xs text-green-700 mt-1">
                     Offer ends {promoEnds}
