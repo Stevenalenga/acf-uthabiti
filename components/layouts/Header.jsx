@@ -15,7 +15,9 @@ import {
   LayoutGrid,
   Globe,
   Mail,
-  Users, UsersRound
+  Users,
+  UsersRound,
+  Hotel,
 } from "lucide-react";
 import Countdown from "@/components/ui/CountDown";
 
@@ -75,6 +77,12 @@ export default function Header() {
     href: "#preconference",
     icon: Calendar,
     desc: "Preparatory dialogues and engagements",
+  },
+  {
+    name: "Accommodation",
+    href: "/accommodation",
+    icon: Hotel,
+    desc: "Hotels near PrideInn Flamingo Beach Resort & Spa",
   },
   {
     name: "Sponsors",
@@ -195,6 +203,17 @@ export default function Header() {
             </Link>
 
             <Link
+              href="/accommodation"
+              className={`font-semibold ${
+                pathname === "/accommodation"
+                  ? "text-[#E5553C]"
+                  : "text-gray-700 hover:text-[#E5553C]"
+              }`}
+            >
+              Accommodation
+            </Link>
+
+            <Link
               href="/media"
               className={`font-semibold ${
                 pathname === "/media"
@@ -296,6 +315,14 @@ export default function Header() {
                 className="block font-semibold text-gray-700"
               >
                 Programme
+              </Link>
+
+              <Link
+                href="/accommodation"
+                onClick={() => setOpen(false)}
+                className="block font-semibold text-gray-700"
+              >
+                Accommodation
               </Link>
 
               <Link

@@ -90,25 +90,15 @@ export default function VenuePage() {
             <h3 className="text-xl font-bold text-gray-900 mb-3">
               Suggested Accommodation
             </h3>
-            <ul className="text-gray-700 space-y-2 mb-4">
-              <li>
-                <strong>PrideInn Flamingo Beach Resort & Spa</strong> — venue
-                hotel and recommended stay option
-              </li>
-              <li>
-                <strong>PrideInn Paradise Beach Resort & Spa</strong> —
-                alternative stay option in Mombasa
-              </li>
-            </ul>
             <p className="text-gray-600 mb-5">
-              Need help with bookings? Contact us and we can arrange
-              accommodation for you.
+              See nearby hotels on or near Serena Road in Shanzu, with indicative
+              rates, booking contacts, and walking distances to the venue.
             </p>
             <a
-              href="/contact"
+              href="/accommodation"
               className="inline-flex bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#cc4a35] transition"
             >
-              Contact us to arrange accommodation
+              View accommodation options
             </a>
           </div>
 
