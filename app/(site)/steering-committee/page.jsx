@@ -134,7 +134,7 @@ export default function SteeringCommitteePage() {
     return (<main className="bg-white">
 
         {/* HERO */}
-        <section className="pt-32 pb-20 bg-[#FFF6F4]">
+        <section className="pt-10 pb-20 bg-[#FFF6F4]">
             <div className="max-w-7xl mx-auto px-6">
 
                 <div className="text-center max-w-4xl mx-auto">

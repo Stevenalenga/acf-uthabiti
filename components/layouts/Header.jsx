@@ -17,6 +17,7 @@ import {
   Mail,
   Users, UsersRound
 } from "lucide-react";
+import Countdown from "@/components/ui/CountDown";
 
 export default function Header() {
   const pathname = usePathname();
@@ -100,10 +101,14 @@ export default function Header() {
       {/* HEADER */}
       <header
         className={`fixed w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-white shadow-md py-2" : "bg-white py-4"
+          scrolled ? "bg-white shadow-md" : "bg-white"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+        <div
+          className={`max-w-7xl mx-auto px-4 flex items-center justify-between transition-all duration-300 ${
+            scrolled ? "py-2" : "py-4"
+          }`}
+        >
           {/* LOGO */}
           <Link href="/" className="flex items-center">
             <img
@@ -327,7 +332,16 @@ export default function Header() {
             </div>
           </div>
         )}
+
+        <div className="bg-[#E5553C] border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-4 py-2 sm:py-2.5">
+            <Countdown variant="banner" />
+          </div>
+        </div>
       </header>
+
+      {/* Offset for fixed header + countdown strip */}
+      <div className="h-[7.5rem] sm:h-[8rem]" aria-hidden />
 
       {/* SCROLL TO TOP */}
       {showTop && (

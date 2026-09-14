@@ -152,7 +152,7 @@ export default function ContactPage() {
   return (
     <main className="bg-white">
       {/* Page Intro */}
-      <section className="pt-32 pb-20">
+      <section className="pt-10 pb-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-3xl">
             <span className="inline-block mb-4 text-sm font-semibold tracking-wide text-[#E5553C] uppercase">

@@ -7,7 +7,7 @@ export default function ExhibitionsPage() {
     <main className="bg-white">
 
       {/* Page Header */}
-      <section className="pt-32 pb-20 bg-white">
+      <section className="pt-10 pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-3xl">
             <span className="inline-block mb-4 text-sm font-semibold tracking-wide text-[#E5553C] uppercase">

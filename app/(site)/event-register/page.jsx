@@ -540,7 +540,7 @@ export default function RegistrationPage() {
 
   return (
     <main className="bg-white min-h-screen text-gray-900">
-      <section className="max-w-6xl mx-auto px-6 pt-28 pb-16">
+      <section className="max-w-6xl mx-auto px-6 pt-8 pb-16">
         <ProgressSteps step={step} />
         <h1 className="text-3xl font-bold mb-2 text-gray-900">
           Conference Registration

@@ -7,7 +7,7 @@ export default function SubmitSessionPage() {
     <main className="bg-white">
 
       {/* HERO */}
-      <section className="bg-[#FFF4F0] py-20 pt-32 text-center">
+      <section className="bg-[#FFF4F0] py-16 pt-10 text-center">
         <div className="max-w-3xl mx-auto px-6">
 
           <h1 className="text-4xl font-extrabold text-gray-900">

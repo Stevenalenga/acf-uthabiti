@@ -87,7 +87,7 @@ export default function HomePage() {
   return (
     <main className="bg-white">
       {/* Hero Section */}
-      <section className="bg-white pt-32 pb-20 overflow-hidden">
+      <section className="bg-white pt-10 pb-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -117,6 +117,10 @@ export default function HomePage() {
                   <Calendar size={16} className="text-[#E5553C]"/>
                   13 – 15 October 2026
                 </span>
+              </div>
+
+              <div className="mt-8">
+                <Countdown variant="hero" />
               </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
