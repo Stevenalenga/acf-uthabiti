@@ -70,7 +70,8 @@ export async function POST(req) {
 
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
 
-          channels: ["card", "mobile_money", "bank_transfer"],
+          // No channels override: Paystack shows every payment method
+          // enabled on the Paystack dashboard.
 
           metadata: {
             system: "acf-mombasa-2026",

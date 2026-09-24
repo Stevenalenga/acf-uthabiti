@@ -247,6 +247,17 @@ export default function Header() {
               Contact
             </Link>
 
+            <Link
+              href="/pay"
+              className={`font-semibold ${
+                pathname === "/pay"
+                  ? "text-[#E5553C]"
+                  : "text-gray-700 hover:text-[#E5553C]"
+              }`}
+            >
+              Pay Invoice
+            </Link>
+
             {/* REGISTER BUTTON */}
             <Link
               href="/event-register"
@@ -347,6 +358,14 @@ export default function Header() {
                 className="block font-semibold text-gray-700"
               >
                 Contact
+              </Link>
+
+              <Link
+                href="/pay"
+                onClick={() => setOpen(false)}
+                className="block font-semibold text-gray-700"
+              >
+                Pay Invoice
               </Link>
 
               <Link
