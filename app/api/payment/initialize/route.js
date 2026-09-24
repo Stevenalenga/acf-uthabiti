@@ -70,8 +70,10 @@ export async function POST(req) {
 
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
 
-          // No channels override: Paystack shows every payment method
-          // enabled on the Paystack dashboard.
+          // Explicitly request card alongside mobile money and bank
+          // transfer so the card option is always offered at checkout
+          // (it must also be enabled on the Paystack dashboard).
+          channels: ["card", "mobile_money", "bank_transfer"],
 
           metadata: {
             system: "acf-mombasa-2026",
