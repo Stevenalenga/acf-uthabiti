@@ -240,14 +240,6 @@ export default function RegistrationPage() {
       // Email selected invoice in the background; continue payment flow immediately.
       emailInvoiceInBackground(form.invoiceCurrency, { silent: true });
 
-      if (form.phase === "LateOnsite") {
-        sessionStorage.removeItem("paymentInProgress");
-        sessionStorage.removeItem("participantId");
-        localStorage.removeItem("participantId");
-        setStep("confirmation");
-        return;
-      }
-
       setStep("payment");
 
       const paymentRes = await fetch("/api/payment/initialize", {

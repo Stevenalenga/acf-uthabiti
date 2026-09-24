@@ -188,7 +188,7 @@ export async function POST(req) {
         data: {
           participant_id: existingParticipant.participant_id,
           amount: effectiveAmount,
-          method: phase === "LateOnsite" ? "ONSITE" : "PAYSTACK",
+          method: "PAYSTACK",
           status: "PENDING",
         },
       });
@@ -263,7 +263,7 @@ export async function POST(req) {
         data: {
           participant_id: createdParticipant.participant_id,
           amount: effectiveAmount,
-          method: phase === "LateOnsite" ? "ONSITE" : "PAYSTACK",
+          method: "PAYSTACK",
           status: "PENDING",
         },
       });
