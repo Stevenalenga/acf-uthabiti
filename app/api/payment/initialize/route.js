@@ -70,7 +70,9 @@ export async function POST(req) {
 
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
 
-          // Explicitly offer card + Kenyan local methods on checkout
+          // Explicitly request card alongside mobile money and bank
+          // transfer so the card option is always offered at checkout
+          // (it must also be enabled on the Paystack dashboard).
           channels: ["card", "mobile_money", "bank_transfer"],
 
           metadata: {
