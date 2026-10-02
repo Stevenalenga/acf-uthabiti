@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { safeJson } from "@/lib/json";
+import { invoiceNumberCandidates } from "@/lib/payment/invoiceNumber";
 import {
   PARTICIPANT_EXPORT_HEADERS,
   buildParticipantsCsv,
@@ -8,10 +9,14 @@ import {
 
 function buildWhere(searchParams) {
   const name = searchParams.get("name")?.trim();
-  const eventId = searchParams.get("eventId")?.trim();
+  const eventIdRaw = searchParams.get("eventId")?.trim();
   const paymentStatus = searchParams.get("paymentStatus")?.trim();
   const phase = searchParams.get("phase")?.trim();
   const type = searchParams.get("type")?.trim();
+  const eventId = /^\d+$/.test(eventIdRaw || "") ? BigInt(eventIdRaw) : null;
+  const invoiceCandidates = name
+    ? invoiceNumberCandidates(name).candidates
+    : [];
 
   return {
     ...(name && {
@@ -20,10 +25,22 @@ function buildWhere(searchParams) {
         { email: { contains: name } },
         { organization: { contains: name } },
         { phone: { contains: name } },
+        {
+          documents: {
+            some: {
+              OR: [
+                { document_number: { contains: name } },
+                ...(invoiceCandidates.length
+                  ? [{ document_number: { in: invoiceCandidates } }]
+                  : []),
+              ],
+            },
+          },
+        },
       ],
     }),
-    ...(eventId && {
-      event_id: BigInt(eventId),
+    ...(eventId != null && {
+      event_id: eventId,
     }),
     ...(phase && { phase }),
     ...(type && { type }),

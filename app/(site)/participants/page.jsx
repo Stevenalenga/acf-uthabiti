@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Users,
   CheckCircle2,
@@ -94,6 +94,9 @@ export default function ParticipantsPage() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  const showToastRef = useRef(showToast);
+  showToastRef.current = showToast;
+
   const fetchParticipants = useCallback(
     async (page = 1) => {
       setLoading(true);
@@ -115,12 +118,12 @@ export default function ParticipantsPage() {
         setMeta(result.meta || { page: 1, limit: 15, total: 0, totalPages: 1 });
         setStats(result.stats || { total: 0, paid: 0, pending: 0, failed: 0 });
       } catch (error) {
-        showToast({ type: "error", message: error.message });
+        showToastRef.current({ type: "error", message: error.message });
       } finally {
         setLoading(false);
       }
     },
-    [filters, meta.limit, showToast]
+    [filters, meta.limit]
   );
 
   useEffect(() => {
@@ -324,7 +327,7 @@ export default function ParticipantsPage() {
                 <input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search by name, email, organization, or phone..."
+                  placeholder="Search by name, email, organization, phone, or invoice number..."
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 text-sm leading-normal focus:outline-none focus:ring-2 focus:ring-orange-500 [color-scheme:light]"
                 />
               </div>
