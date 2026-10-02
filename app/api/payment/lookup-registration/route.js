@@ -5,6 +5,9 @@ import {
   TYPE_LABELS,
   PHASE_LABELS,
 } from "@/lib/documents/constants";
+import {
+  invoiceNumberCandidates,
+} from "@/lib/payment/invoiceNumber";
 
 /**
  * Looks up an existing registration by invoice (registration) number and the
@@ -14,10 +17,11 @@ import {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const rawNumber = String(body.invoiceNumber || "").trim().toUpperCase();
+    const rawInput = String(body.invoiceNumber || "").trim();
     const email = String(body.email || "").trim().toLowerCase();
+    const { normalized, candidates, seq } = invoiceNumberCandidates(rawInput);
 
-    if (!rawNumber) {
+    if (!normalized) {
       return Response.json(
         { error: "Please enter your registration / invoice number." },
         { status: 400 }
@@ -39,27 +43,30 @@ export async function POST(req) {
       },
     };
 
-    // Exact invoice number match first (e.g. ACF2026/086/2026)
-    let doc = await prisma.registration_document_tbl.findFirst({
-      where: {
-        type: "INVOICE",
-        status: { not: "VOID" },
-        document_number: rawNumber,
-      },
-      orderBy: { document_id: "desc" },
-      include,
-    });
+    let doc = null;
 
-    // Allow entering just the sequence number (e.g. "86" or "086")
-    if (!doc && /^\d+$/.test(rawNumber)) {
-      const padded = rawNumber.padStart(3, "0");
+    for (const candidate of candidates) {
+      doc = await prisma.registration_document_tbl.findFirst({
+        where: {
+          type: "INVOICE",
+          status: { not: "VOID" },
+          document_number: candidate,
+        },
+        orderBy: { document_id: "desc" },
+        include,
+      });
+      if (doc) break;
+    }
+
+    // Fallback: sequence-only contains match (handles odd formatting)
+    if (!doc && seq) {
       doc = await prisma.registration_document_tbl.findFirst({
         where: {
           type: "INVOICE",
           status: { not: "VOID" },
           document_number: {
             startsWith: `${ORGANIZATION.eventCode}/`,
-            contains: `/${padded}/`,
+            contains: `/${seq}/`,
           },
         },
         orderBy: { document_id: "desc" },
@@ -71,7 +78,7 @@ export async function POST(req) {
       return Response.json(
         {
           error:
-            "No registration was found for this invoice number. Please check the number on your invoice email and try again.",
+            "Invoice not found. Please enter the invoice number exactly as shown on your invoice (for example ACF2026/086/2026) and try again.",
         },
         { status: 404 }
       );
@@ -83,7 +90,7 @@ export async function POST(req) {
       return Response.json(
         {
           error:
-            "The email does not match this registration. Please use the same email from your original registration.",
+            "The email does not match this invoice. Please use the same email the invoice was sent to.",
         },
         { status: 400 }
       );
@@ -111,6 +118,11 @@ export async function POST(req) {
       );
     }
 
+    // Prefer the issued invoice amount/currency for display when available
+    const amountDue =
+      doc.currency === "KES" ? Number(doc.amount) : Number(payment.amount);
+    const currency = doc.currency === "KES" ? "KES" : "USD";
+
     return Response.json(
       safeJson({
         participantId: participant.participant_id,
@@ -119,7 +131,8 @@ export async function POST(req) {
         organization: participant.organization,
         phase: PHASE_LABELS[participant.phase] || participant.phase,
         type: TYPE_LABELS[participant.type] || participant.type,
-        amount: payment.amount,
+        amount: amountDue,
+        currency,
         invoiceNumber: doc.document_number,
       })
     );

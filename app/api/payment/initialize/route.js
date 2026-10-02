@@ -70,8 +70,8 @@ export async function POST(req) {
 
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
 
-          // No channels override: Paystack shows every payment method
-          // enabled on the Paystack dashboard.
+          // Explicitly offer card + Kenyan local methods on checkout
+          channels: ["card", "mobile_money", "bank_transfer"],
 
           metadata: {
             system: "acf-mombasa-2026",
