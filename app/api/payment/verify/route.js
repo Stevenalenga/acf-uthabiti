@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { sendPaymentConfirmationEmail } from "@/lib/sendPaymentConfirmationEmail";
+import { settleDinnerPayment } from "@/lib/dinner/settleDinnerPayment";
+import { settleLivestreamPayment } from "@/lib/livestream/settleLivestreamPayment";
+import { isDinnerPaymentReference } from "@/lib/dinner";
 
 export async function POST(req) {
   try {
@@ -18,6 +21,25 @@ export async function POST(req) {
 
     if (!data.status || data.data.status !== "success") {
       return Response.json({ success: false }, { status: 400 });
+    }
+
+    if (isDinnerPaymentReference(reference)) {
+      const settled = await settleDinnerPayment(reference, "success");
+      if (!settled.found) {
+        return Response.json({ error: "Payment not found" }, { status: 404 });
+      }
+      return Response.json({
+        success: true,
+        kind: settled.kind === "partnership" ? "partnership-dinner" : "dinner",
+      });
+    }
+
+    if (String(reference).startsWith("LIVE-")) {
+      const settled = await settleLivestreamPayment(reference, "success");
+      if (!settled.found) {
+        return Response.json({ error: "Payment not found" }, { status: 404 });
+      }
+      return Response.json({ success: true, kind: "livestream" });
     }
 
     const payment = await prisma.payment_tbl.findFirst({

@@ -13,6 +13,7 @@ function buildWhere(searchParams) {
   const paymentStatus = searchParams.get("paymentStatus")?.trim();
   const phase = searchParams.get("phase")?.trim();
   const type = searchParams.get("type")?.trim();
+  const profession = searchParams.get("profession")?.trim();
   const eventId = /^\d+$/.test(eventIdRaw || "") ? BigInt(eventIdRaw) : null;
   const invoiceCandidates = name
     ? invoiceNumberCandidates(name).candidates
@@ -44,6 +45,7 @@ function buildWhere(searchParams) {
     }),
     ...(phase && { phase }),
     ...(type && { type }),
+    ...(profession && { profession }),
     ...(paymentStatus && {
       payments: {
         some: { status: paymentStatus },
@@ -143,6 +145,37 @@ export async function GET(req) {
       }),
     ]);
 
+    const inLogbookEmails = new Set();
+    const inLogbookIds = new Set();
+    if (participants.length) {
+      const logbookFlags = await prisma.participant_logbook_tbl.findMany({
+        where: {
+          OR: [
+            {
+              participant_id: {
+                in: participants.map((row) => row.participant_id),
+              },
+            },
+            { email: { in: participants.map((row) => row.email) } },
+          ],
+        },
+        select: { email: true, participant_id: true },
+      });
+      for (const row of logbookFlags) {
+        inLogbookEmails.add(String(row.email || "").trim().toLowerCase());
+        if (row.participant_id != null) {
+          inLogbookIds.add(String(row.participant_id));
+        }
+      }
+    }
+
+    const participantsWithLogbook = participants.map((row) => ({
+      ...row,
+      inLogbook:
+        inLogbookIds.has(String(row.participant_id)) ||
+        inLogbookEmails.has(String(row.email || "").trim().toLowerCase()),
+    }));
+
     const stats = statsRows.reduce(
       (acc, row) => {
         acc.total += 1;
@@ -157,7 +190,7 @@ export async function GET(req) {
 
     return Response.json(
       safeJson({
-        data: participants,
+        data: participantsWithLogbook,
         meta: {
           page,
           limit,

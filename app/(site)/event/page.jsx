@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, MapPin, Users, Globe, Mic, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Users, Globe, Mic, ArrowRight, Download } from "lucide-react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
@@ -11,19 +11,25 @@ export default function ACFKigali2025Page() {
   const [index, setIndex] = useState(0);
 
   const images = [
+    "/images/kigali-forum/kigali-hero.jpg",
+    "/images/kigali-forum/kigali-forum.jpg",
     "/images/kigali-forum/forum1.jpg",
     "/images/kigali-forum/forum2.jpg",
-    "/images/kigali-forum/forum10.jpg",
     "/images/kigali-forum/forum4.jpg",
     "/images/kigali-forum/forum5.jpg",
     "/images/kigali-forum/forum6.jpg",
     "/images/kigali-forum/forum7.jpg",
-    "/images/kigali-forum/forum11.jpg",
-    "/images/kigali-forum/forum12.jpg",
+    "/images/kigali-forum/forum10.JPG",
+    "/images/kigali-forum/forum11.JPG",
+    "/images/kigali-forum/forum12.JPG",
+    "/images/kigali-forum/keynote.jpg",
+    "/images/kigali-forum/workshop.jpg",
+    "/images/kigali-forum/network.jpg",
+    "/images/kigali-forum/research.jpg",
   ];
 
   return (
-    <main className="bg-white">
+    <main className="bg-white text-gray-900">
 
       <section
         className="relative h-[70vh] flex items-center"
@@ -55,7 +61,7 @@ export default function ACFKigali2025Page() {
 
             <div className="flex items-center gap-2">
               <Calendar />
-              15 December 2025
+              6–9 May 2025
             </div>
 
             <div className="flex items-center gap-2">
@@ -95,7 +101,7 @@ export default function ACFKigali2025Page() {
       <section className="bg-[#FFF4F0] py-20">
         <div className="max-w-7xl mx-auto px-4">
 
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Forum at a Glance
           </h2>
 
@@ -129,7 +135,7 @@ export default function ACFKigali2025Page() {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4">
 
-          <h2 className="text-3xl font-bold text-center mb-14">
+          <h2 className="text-3xl font-bold text-center mb-14 text-gray-900">
             Forum Gallery
           </h2>
 
@@ -170,7 +176,7 @@ export default function ACFKigali2025Page() {
       <section className="bg-[#FFF4F0] py-20">
         <div className="max-w-7xl mx-auto px-4">
 
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Key Outcomes
           </h2>
 
@@ -206,11 +212,49 @@ export default function ACFKigali2025Page() {
       </section>
 
 
+      {/* KIGALI COMMITMENTS */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="rounded-3xl border border-[#FFE3DF] bg-[#FFF9F7] p-8 sm:p-10 lg:p-12 shadow-sm">
+            <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+              <div>
+                <span className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#E5553C] shadow-sm">
+                  Downloadable PDF
+                </span>
+
+                <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+                  The Kigali Commitments
+                </h2>
+
+                <p className="mt-4 max-w-2xl text-gray-600 leading-relaxed">
+                  The Kigali Commitments on Early Childhood Care & Development
+                  are still available for download. This is the document that
+                  captured the shared priorities, policy direction, and call to
+                  action from ACF Kigali 2025.
+                </p>
+              </div>
+
+              <div className="flex lg:justify-end">
+                <a
+                  href="/documents/The-Kigali-Commitments.pdf"
+                  download
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#E5553C] px-6 py-4 font-semibold text-white shadow-md transition hover:bg-[#cf4b35]"
+                >
+                  <Download size={18} />
+                  Download PDF
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       {/* CONTINUATION */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
 
-          <h2 className="text-3xl font-bold mb-6">
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">
             From Kigali to Mombasa
           </h2>
 

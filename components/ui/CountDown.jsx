@@ -71,22 +71,22 @@ export default function Countdown({ variant = "card" }) {
 
   if (variant === "banner") {
     return (
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-white">
-        <span className="text-xs sm:text-sm font-medium uppercase tracking-wide text-white/90">
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-white">
+        <span className="text-sm font-medium uppercase tracking-[0.14em] text-white/90">
           Event starts in
         </span>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 sm:gap-4">
           {units.map((unit, i) => (
-            <span key={unit.key} className="flex items-baseline gap-1">
+            <span key={unit.key} className="flex items-baseline gap-1.5">
               {i > 0 && (
                 <span className="text-white/50 font-bold mr-1" aria-hidden>
                   :
                 </span>
               )}
-              <span className="tabular-nums text-base sm:text-lg font-bold leading-none">
+              <span className="tabular-nums text-lg sm:text-xl font-bold leading-none">
                 {unit.key === "days" ? unit.value : pad(unit.value)}
               </span>
-              <span className="text-[10px] sm:text-xs uppercase text-white/80">
+              <span className="text-[10px] sm:text-xs uppercase tracking-wide text-white/80">
                 {unit.label}
               </span>
             </span>

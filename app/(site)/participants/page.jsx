@@ -18,6 +18,8 @@ import {
   X,
   Mail,
   FileSpreadsheet,
+  BookUser,
+  Check,
 } from "lucide-react";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -45,6 +47,7 @@ const EMPTY_FILTERS = {
   paymentStatus: "",
   phase: "",
   type: "",
+  profession: "",
 };
 
 export default function ParticipantsPage() {
@@ -62,6 +65,7 @@ export default function ParticipantsPage() {
   const [expandedId, setExpandedId] = useState(null);
   const [exporting, setExporting] = useState(null);
   const [resendingId, setResendingId] = useState(null);
+  const [addingLogbookId, setAddingLogbookId] = useState(null);
 
   const activeFilterCount = useMemo(
     () => Object.values(filters).filter(Boolean).length,
@@ -174,6 +178,34 @@ export default function ParticipantsPage() {
       showToast({ type: "error", message: error.message });
     } finally {
       setExporting(null);
+    }
+  };
+
+  const addToLogbook = async (participantId) => {
+    try {
+      setAddingLogbookId(participantId);
+      const res = await fetch(
+        `/api/admin/participants/${participantId}/logbook`,
+        { method: "POST" }
+      );
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Failed to add to logbook");
+
+      setData((prev) =>
+        prev.map((row) =>
+          String(row.participant_id) === String(participantId)
+            ? { ...row, inLogbook: true }
+            : row
+        )
+      );
+      showToast({
+        type: "success",
+        message: result.message || "Added to the participants logbook",
+      });
+    } catch (error) {
+      showToast({ type: "error", message: error.message });
+    } finally {
+      setAddingLogbookId(null);
     }
   };
 
@@ -376,6 +408,16 @@ export default function ParticipantsPage() {
                 { value: "other", label: "International" },
               ]}
             />
+
+            <FilterTabs
+              label="Category"
+              value={filters.profession}
+              onChange={(v) => setFilters((f) => ({ ...f, profession: v }))}
+              options={[
+                { value: "", label: "All" },
+                { value: "Dinner", label: "Dinner" },
+              ]}
+            />
           </div>
         </div>
 
@@ -440,6 +482,8 @@ export default function ParticipantsPage() {
                         }
                         onResendInvoice={() => resendInvoice(p.participant_id)}
                         resending={resendingId === p.participant_id}
+                        onAddToLogbook={() => addToLogbook(p.participant_id)}
+                        addingLogbook={addingLogbookId === p.participant_id}
                       />
                     );
                   })
@@ -485,6 +529,8 @@ function ParticipantRow({
   onToggle,
   onResendInvoice,
   resending,
+  onAddToLogbook,
+  addingLogbook,
 }) {
   const status = payment?.status || "PENDING";
 
@@ -504,6 +550,11 @@ function ParticipantRow({
         <td className="p-4">
           <p className="font-medium text-gray-900">{p.full_name}</p>
           <p className="text-gray-500 text-xs mt-0.5">{p.email}</p>
+          {p.profession === "Dinner" && (
+            <span className="inline-flex mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">
+              Dinner
+            </span>
+          )}
           <p className="text-gray-400 text-xs md:hidden mt-0.5">{p.organization}</p>
         </td>
         <td className="p-4 hidden md:table-cell text-gray-700">{p.organization}</td>
@@ -530,20 +581,39 @@ function ParticipantRow({
           <DocumentLinks invoice={invoice} receipt={receipt} />
         </td>
         <td className="p-4" onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            onClick={onResendInvoice}
-            disabled={resending || !payment}
-            title={
-              payment
-                ? "Resend invoice email to participant"
-                : "No payment record to invoice"
-            }
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-xs font-semibold hover:bg-orange-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            <Mail className={`h-3.5 w-3.5 ${resending ? "animate-pulse" : ""}`} />
-            {resending ? "Sending…" : "Resend Invoice"}
-          </button>
+          <div className="flex flex-col items-stretch gap-2">
+            {p.inLogbook ? (
+              <span className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-green-200 bg-green-50 text-green-800 text-xs font-semibold">
+                <Check className="h-3.5 w-3.5" />
+                In logbook
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={onAddToLogbook}
+                disabled={addingLogbook}
+                title="Add this registration to the participants logbook"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-xs font-semibold hover:bg-orange-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <BookUser className={`h-3.5 w-3.5 ${addingLogbook ? "animate-pulse" : ""}`} />
+                {addingLogbook ? "Adding…" : "Add to participants logbook"}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onResendInvoice}
+              disabled={resending || !payment}
+              title={
+                payment
+                  ? "Resend invoice email to participant"
+                  : "No payment record to invoice"
+              }
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <Mail className={`h-3.5 w-3.5 ${resending ? "animate-pulse" : ""}`} />
+              {resending ? "Sending…" : "Resend Invoice"}
+            </button>
+          </div>
         </td>
       </tr>
 
@@ -557,6 +627,8 @@ function ParticipantRow({
               receipt={receipt}
               onResendInvoice={onResendInvoice}
               resending={resending}
+              onAddToLogbook={onAddToLogbook}
+              addingLogbook={addingLogbook}
             />
           </td>
         </tr>
@@ -572,6 +644,8 @@ function ExpandedDetails({
   receipt,
   onResendInvoice,
   resending,
+  onAddToLogbook,
+  addingLogbook,
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
@@ -629,11 +703,27 @@ function ExpandedDetails({
         {receipt && (
           <DetailItem label="Receipt No." value={receipt.document_number} />
         )}
+        {p.inLogbook ? (
+          <p className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-green-800">
+            <Check className="h-4 w-4" />
+            Already in the participants logbook
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={onAddToLogbook}
+            disabled={addingLogbook}
+            className="mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium hover:bg-orange-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <BookUser className={`h-4 w-4 ${addingLogbook ? "animate-pulse" : ""}`} />
+            {addingLogbook ? "Adding to logbook…" : "Add to participants logbook"}
+          </button>
+        )}
         <button
           type="button"
           onClick={onResendInvoice}
           disabled={resending || !payment}
-          className="mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-orange-200 bg-white text-orange-700 text-sm font-medium hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="mt-3 ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-orange-200 bg-white text-orange-700 text-sm font-medium hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <Mail className={`h-4 w-4 ${resending ? "animate-pulse" : ""}`} />
           {resending ? "Resending invoice…" : "Resend invoice email"}

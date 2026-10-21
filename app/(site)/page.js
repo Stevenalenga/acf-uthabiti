@@ -131,10 +131,10 @@ export default function HomePage() {
                   Register Now
                 </a>
                 <a
-                  href="#about"
+                  href="/field-visits"
                   className="border-2 border-[#E5553C] text-[#E5553C] font-semibold px-8 py-4 rounded-lg hover:bg-[#FFECEA]"
                 >
-                  Learn More
+                  Field visit sign-up
                 </a>
               </div>
 
@@ -1168,7 +1168,7 @@ export default function HomePage() {
             </div>
 
             <Link
-              href="/event"
+              href="/kigali"
               className="inline-flex items-center gap-2 bg-[#E5553C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#cc4a35] transition"
             >
               View ACFKigali2025
@@ -1540,7 +1540,7 @@ export default function HomePage() {
                 className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center transition-transform transform hover:-translate-y-2"
               >
                 <img
-                  src="/images/cac-logos.png"
+                  src="/images/cac-logos.webp"
                   alt="Convener Logo"
                   className="h-32 sm:h-40 object-contain mb-4"
                 />

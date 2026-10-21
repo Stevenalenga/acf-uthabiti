@@ -9,8 +9,10 @@ import {
   Globe,
   Download,
   Mic,
-  Handshake
+  Handshake,
+  ExternalLink
 } from "lucide-react";
+import { FIELD_VISIT } from "@/lib/fieldVisit";
 
 export default function ProgrammePage() {
 
@@ -106,8 +108,8 @@ export default function ProgrammePage() {
           </p>
 
           <p className="text-gray-500 mt-6 italic">
-            Note: The programme outlined below provides an overview of the Forum
-            structure and may be refined as speakers and partners are confirmed.
+            The draft programme is now available to download. The overview below
+            may still be refined as speakers and partners are confirmed.
           </p>
 
         </div>
@@ -201,7 +203,9 @@ export default function ProgrammePage() {
               {
                 icon: MapPin,
                 title: "Field Visits",
-                text: "Visit childcare and Early Childhood Development initiatives in and around Mombasa to learn from community-driven models."
+                text: "Visit childcare and Early Childhood Development initiatives in and around Mombasa to learn from community-driven models.",
+                href: FIELD_VISIT.pagePath,
+                cta: "Sign up for a field visit",
               }
             ].map((item, i) => {
               const Icon = item.icon;
@@ -221,6 +225,15 @@ export default function ProgrammePage() {
                   <p className="text-gray-600 text-sm leading-relaxed">
                     {item.text}
                   </p>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-[#E5553C] hover:underline"
+                    >
+                      {item.cta}
+                      <ExternalLink size={14} />
+                    </a>
+                  ) : null}
 
                 </div>
               );
@@ -231,19 +244,43 @@ export default function ProgrammePage() {
         </div>
       </section>
 
+      {/* FIELD VISIT SIGN-UP */}
+      <section className="py-16 text-center">
+        <h3 className="text-2xl font-bold text-gray-900 mb-3">
+          Field visit registration
+        </h3>
+        <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          Day 3 includes visits to childcare centres in the Mombasa area.
+          Places may be limited — complete the sign-up form to book your place.
+        </p>
+        <a
+          href={FIELD_VISIT.formUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-[#E5553C] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#cf4b35] transition"
+        >
+          Open the field visit form
+          <ExternalLink size={18} />
+        </a>
+      </section>
+
       {/* DOWNLOAD PROGRAMME */}
       <section className="py-20 bg-[#FFF4F0] text-center">
 
-        <h3 className="text-2xl font-bold text-gray-900 mb-6">
-          Download the Full Programme
+        <h3 className="text-2xl font-bold text-gray-900 mb-3">
+          Draft Programme
         </h3>
+        <p className="text-gray-600 mb-6">
+          The draft programme for ACF Mombasa 2026 is available to download.
+        </p>
 
-        <a 
-          href="/documents/acf-programme.pdf"
+        <a
+          href="/documents/ACF-Mombasa-2026-Draft-Programme.pdf"
+          download
           className="inline-flex items-center gap-2 bg-[#E5553C] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#cf4b35] transition"
         >
           <Download size={18} />
-          Download Programme PDF
+          Download Draft Programme
         </a>
 
       </section>

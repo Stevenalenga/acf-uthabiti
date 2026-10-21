@@ -42,6 +42,16 @@ export default function PaymentSuccess() {
 
   const params = useSearchParams();
   const reference = params.get("reference");
+  const dinnerPayment = String(reference || "").startsWith("DHOW-");
+  const partnershipDinnerPayment = String(reference || "").startsWith("PARTNER-");
+  const livestreamPayment = String(reference || "").startsWith("LIVE-");
+  const retryHref = livestreamPayment
+    ? "/livestream"
+    : partnershipDinnerPayment
+      ? "/partnership-dinner"
+      : dinnerPayment
+        ? "/tamarind-dinner"
+        : "/event-register";
 
   const [status, setStatus] = useState("loading");
 
@@ -129,7 +139,7 @@ export default function PaymentSuccess() {
           </p>
 
           <Link
-            href="/event-register"
+            href={retryHref}
             className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition"
           >
             Try Again
@@ -158,7 +168,13 @@ export default function PaymentSuccess() {
         </h1>
 
         <p className="text-gray-700 mb-6">
-          Your conference registration has been successfully confirmed.
+          {livestreamPayment
+            ? "Your livestream access has been confirmed."
+            : partnershipDinnerPayment
+              ? "Your Dinner Cruise payment has been received."
+              : dinnerPayment
+                ? "Your Tamarind Dhow dinner payment has been received."
+                : "Your conference registration has been successfully confirmed."}
         </p>
 
         {reference && (
@@ -173,9 +189,13 @@ export default function PaymentSuccess() {
         )}
 
         <p className="text-gray-600 mb-8">
-          A confirmation email with your receipt and registration details has been sent
-          to your email address. For questions or changes to your registration,
-          please contact{" "}
+          {livestreamPayment
+            ? "We have emailed your paid invoice and your personal livestream link. Check your inbox (and spam folder). For questions, contact "
+            : partnershipDinnerPayment
+              ? "A confirmation email has been sent to your email address. We look forward to seeing you at Char-Choma Restaurant at 7:00pm for the Dinner Cruise. For questions, contact "
+              : dinnerPayment
+                ? "A confirmation email has been sent to your email address. The ACF secretariat has your dinner request. For questions, contact "
+                : "A confirmation email with your receipt and registration details has been sent to your email address. For questions or changes to your registration, please contact "}
           <a
             href="mailto:acf@uthabitiafrica.org"
             className="text-orange-600 hover:underline"
@@ -186,10 +206,16 @@ export default function PaymentSuccess() {
         </p>
 
         <Link
-          href="/event-register"
+          href={retryHref}
           className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition"
         >
-          Return to Conference registation page
+          {livestreamPayment
+            ? "Return to the livestream page"
+            : partnershipDinnerPayment
+              ? "Return to the Dinner Cruise page"
+              : dinnerPayment
+                ? "Return to the dinner page"
+                : "Return to Conference registation page"}
         </Link>
 
       </div>

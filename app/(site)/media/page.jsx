@@ -6,10 +6,17 @@ export default function MediaResources() {
 
   const resources = [
     {
+      title: "Draft Programme",
+      description:
+        "Draft programme for the Africa Childcare Forum, ACF Mombasa 2026.",
+      icon: FileText,
+      file: "/documents/ACF-Mombasa-2026-Draft-Programme.pdf"
+    },
+    {
       title: "ACFKigali2025",
       description: "The Kigali Commitments on Early Childhood Care & Development",
       icon: Users,
-      file: "documents/The-Kigali-Commitments.pdf" 
+      file: "/documents/The-Kigali-Commitments.pdf"
     },
     {
       title: "Concept Note",

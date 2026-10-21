@@ -41,6 +41,12 @@ enum InviteStatus {
   USED
 }
 
+enum LogbookListingStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
 model event_tbl {
   event_id   BigInt   @id @default(autoincrement())
   name       String
@@ -178,6 +184,71 @@ model special_invite_tbl {
   @@index([status])
 }
 
+model dinner_booking_tbl {
+  booking_id        BigInt        @id @default(autoincrement())
+  full_name         String
+  email             String
+  phone             String
+  organization      String?
+  adults            Int
+  children          Int           @default(0)
+  amount_kes        Int
+  kind              String        @default("tamarind")
+  currency          String        @default("KES")
+  notes             String?       @db.Text
+  status            PaymentStatus @default(PENDING)
+  payment_reference String?       @unique
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([kind])
+}
+
+model livestream_purchase_tbl {
+  purchase_id         BigInt         @id @default(autoincrement())
+  full_name           String
+  email               String
+  phone               String
+  organization        String?
+  amount_usd          Float
+  amount_kes          Float
+  currency            String         @default("USD")
+  status              PaymentStatus  @default(PENDING)
+  payment_reference   String?        @unique
+  access_token        String         @unique
+  invoice_number      String?        @unique
+  invoice_file_name   String?
+  invoice_file_path   String?
+  invoice_emailed_at  DateTime?
+  link_emailed_at     DateTime?
+  paidAt              DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([email])
+  @@index([status])
+}
+
+model mombasa_gallery_photo_tbl {
+  photo_id      BigInt   @id @default(autoincrement())
+  title         String?
+  original_name String
+  stored_name   String   @unique
+  mime_type     String
+  file_size     Int
+  file_kind     String   @default("image")
+  uploaded_by   String?
+  folder_name   String   @default("ACF Mombasa 2026")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([folder_name])
+  @@index([createdAt])
+}
+
 model NewsletterSubscriber {
   email_id           BigInt   @id @default(autoincrement())
   email              String   @unique
@@ -187,4 +258,26 @@ model NewsletterSubscriber {
   updatedAt          DateTime @updatedAt
 
   @@index([email])
+}
+
+model participant_logbook_tbl {
+  logbook_id         BigInt   @id @default(autoincrement())
+  participant_id     BigInt?
+  full_name          String
+  email              String   @unique
+  phone              String?
+  organization       String?
+  country            String?
+  role               String?
+  is_speaker         Boolean  @default(false)
+  status             LogbookListingStatus @default(PUBLISHED)
+  bio                String?  @db.Text
+  photo_file         String?
+  emergency_contact  String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([participant_id])
+  @@index([full_name])
+  @@index([status])
 }

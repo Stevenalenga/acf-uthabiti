@@ -6,6 +6,7 @@ import {
   isPhaseOpen,
   PHASE_LABELS,
   getRegistrationFee,
+  keGovernmentOfficialUsdAmount,
 } from "@/lib/documents/constants";
 
 export async function POST(req) {
@@ -34,10 +35,45 @@ export async function POST(req) {
       amount,
       inviteToken,
       invoiceCurrency,
+      governmentOfficial,
+      title,
+      address,
+      county,
+      department,
     } = body;
 
+    const isGovernmentOfficial = governmentOfficial === true;
     const chosenInvoiceCurrency =
       String(invoiceCurrency || "USD").toUpperCase() === "KES" ? "KES" : "USD";
+    const registrationPhase = isGovernmentOfficial
+      ? phase || "LateOnsite"
+      : phase;
+    const registrationType = isGovernmentOfficial
+      ? type || "eastAfrica"
+      : type;
+    const officialTitle = String(title || "").trim();
+    const officialAddress = String(address || "").trim();
+    const officialCounty = String(county || "").trim();
+    const officialDepartment = String(department || "").trim();
+
+    if (isGovernmentOfficial) {
+      if (
+        !fullName?.trim() ||
+        !email?.trim() ||
+        !officialTitle ||
+        !officialAddress ||
+        !officialCounty ||
+        !officialDepartment
+      ) {
+        return Response.json(
+          {
+            error:
+              "Name, email, title, address, county, and department are required.",
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     if (!email?.trim() || !fullName?.trim()) {
       return Response.json(
@@ -77,7 +113,7 @@ export async function POST(req) {
       }
     }
 
-    if (!invite) {
+    if (!invite && !isGovernmentOfficial) {
       if (!phase || !FEES[phase]) {
         return Response.json(
           { error: "Please select a valid registration phase." },
@@ -111,9 +147,17 @@ export async function POST(req) {
       }
     }
 
-    const effectiveAmount = invite ? Number(invite.amount) : Number(amount);
+    const effectiveAmount = invite
+      ? Number(invite.amount)
+      : isGovernmentOfficial
+        ? keGovernmentOfficialUsdAmount()
+        : Number(amount);
 
-    if (!invite && (amount == null || Number.isNaN(Number(amount)))) {
+    if (
+      !invite &&
+      !isGovernmentOfficial &&
+      (amount == null || Number.isNaN(Number(amount)))
+    ) {
       return Response.json(
         { error: "Registration fee is missing. Please select phase and type." },
         { status: 400 }
@@ -157,13 +201,24 @@ export async function POST(req) {
 
         if (existingPayment.status !== "SUCCESS") {
           try {
+            let paymentForInvoice = existingPayment;
+            if (
+              isGovernmentOfficial &&
+              Number(existingPayment.amount) !== Number(effectiveAmount)
+            ) {
+              paymentForInvoice = await prisma.payment_tbl.update({
+                where: { payment_id: existingPayment.payment_id },
+                data: { amount: effectiveAmount },
+              });
+            }
             // PDF is prepared here; email is sent in the background from the client.
             const invoice = await issueRegistrationInvoice({
               participant: existingParticipant,
-              payment: existingPayment,
+              payment: paymentForInvoice,
               eventId: event.event_id,
               currency: chosenInvoiceCurrency,
               skipEmail: true,
+              showKesExchangeNote: !isGovernmentOfficial,
             });
             invoiceNumber = invoice?.document_number || invoiceNumber;
           } catch (docError) {
@@ -211,6 +266,7 @@ export async function POST(req) {
           eventId: event.event_id,
           currency: chosenInvoiceCurrency,
           skipEmail: true,
+          showKesExchangeNote: !isGovernmentOfficial,
         });
         invoiceNumber = invoice?.document_number || null;
   } catch (docError) {
@@ -236,25 +292,37 @@ export async function POST(req) {
           event_id: event.event_id,
           full_name: fullName.trim(),
           email: email.trim(),
-          phone,
-          organization,
-          country,
-          profession,
+          phone: isGovernmentOfficial ? "N/A" : phone,
+          organization: isGovernmentOfficial
+            ? officialCounty === "National Government"
+              ? `${officialDepartment}, National Government`
+              : `${officialDepartment}, ${officialCounty} County`
+            : organization,
+          country: isGovernmentOfficial ? "Kenya" : country,
+          profession: isGovernmentOfficial ? officialTitle : profession,
           other_profession: otherProfession,
-          visa_info: visaInfo,
-          phase,
-          type,
+          visa_info: isGovernmentOfficial ? officialAddress : visaInfo,
+          phase: registrationPhase,
+          type: registrationType,
           other_accessibility: otherAccessibility,
           required_translation: requiredTranslation,
           other_dietary_restrictions: otherDietaryRestrictions,
-          media_consent: mediaConsent,
-          report_consent: reportConsent,
+          media_consent: isGovernmentOfficial ? "N/A" : mediaConsent,
+          report_consent: isGovernmentOfficial ? "N/A" : reportConsent,
           emergency_contact: emergencyContact,
           accessibility: {
-            create: (accessibility || []).map((value) => ({ value })),
+            create: (
+              isGovernmentOfficial && !(accessibility || []).length
+                ? ["None"]
+                : accessibility || []
+            ).map((value) => ({ value })),
           },
           dietary: {
-            create: (dietaryRestrictions || []).map((value) => ({ value })),
+            create: (
+              isGovernmentOfficial && !(dietaryRestrictions || []).length
+                ? ["None"]
+                : dietaryRestrictions || []
+            ).map((value) => ({ value })),
           },
         },
       });
@@ -289,6 +357,7 @@ export async function POST(req) {
         eventId: event.event_id,
         currency: chosenInvoiceCurrency,
         skipEmail: true,
+        showKesExchangeNote: !isGovernmentOfficial,
       });
       invoiceNumber = invoice?.document_number || null;
     } catch (docError) {

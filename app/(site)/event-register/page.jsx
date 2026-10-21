@@ -21,6 +21,7 @@ import {
   getStandardFee,
   formatPromoEndDate,
   PROMO_DISCOUNT,
+  KE_GOVERNMENT_OFFICIAL_FEE_KES,
 } from "@/lib/documents/constants";
 
 const FIELD_ORDER = [
@@ -40,7 +41,7 @@ const FIELD_ORDER = [
   "invoiceCurrency",
 ];
 
-export default function RegistrationPage() {
+export default function RegistrationPage({ governmentOfficial = false }) {
   const [step, setStep] = useState("registration");
   const { showToast } = useToast();
   const [submit, setSubmit] = useState(false);
@@ -50,13 +51,13 @@ export default function RegistrationPage() {
     email: "",
     phone: "",
     organization: "",
-    country: "",
-    profession: "",
+    country: governmentOfficial ? "Kenya" : "",
+    profession: governmentOfficial ? "Government" : "",
     otherProfession: "",
     visaInfo: "",
-    phase: "",
-    type: "",
-    invoiceCurrency: "",
+    phase: governmentOfficial ? "LateOnsite" : "",
+    type: governmentOfficial ? "eastAfrica" : "",
+    invoiceCurrency: governmentOfficial ? "KES" : "",
     accessibility: [],
     otherAccessibility: "",
     requiredTranslation: "",
@@ -145,7 +146,7 @@ export default function RegistrationPage() {
     if (!form.profession) newErrors.profession = "Profession is required";
     if (form.profession === "Other" && !form.otherProfession.trim())
       newErrors.otherProfession = "Please specify your profession";
-    if (!invite) {
+    if (!invite && !governmentOfficial) {
       if (!registrationOpen) {
         newErrors.phase = "Online registration is currently closed";
       } else if (!form.phase) {
@@ -180,11 +181,13 @@ export default function RegistrationPage() {
     !invite && form.phase && form.type
       ? getStandardFee(form.phase, form.type)
       : null;
-  const fee = invite
-    ? invite.amount
-    : form.phase && form.type
-      ? getRegistrationFee(form.phase, form.type)
-      : null;
+  const fee = governmentOfficial
+    ? null
+    : invite
+      ? invite.amount
+      : form.phase && form.type
+        ? getRegistrationFee(form.phase, form.type)
+        : null;
   const feeIsDiscounted =
     promoActive &&
     fee != null &&
@@ -214,9 +217,10 @@ export default function RegistrationPage() {
         },
         body: JSON.stringify({
           ...form,
-          amount: fee,
-          invoiceCurrency: form.invoiceCurrency,
+          amount: governmentOfficial ? undefined : fee,
+          invoiceCurrency: governmentOfficial ? "KES" : form.invoiceCurrency,
           inviteToken: invite?.token || undefined,
+          governmentOfficial: governmentOfficial || undefined,
         }),
       });
 
@@ -459,7 +463,9 @@ export default function RegistrationPage() {
                 {[
                   { value: "USD", label: "Register in USD" },
                   { value: "KES", label: "Register in Kenyan Shillings" },
-                ].map((option) => {
+                ]
+                  .filter((option) => !governmentOfficial || option.value === "KES")
+                  .map((option) => {
                   const selected = form.invoiceCurrency === option.value;
                   return (
                     <button
@@ -535,11 +541,29 @@ export default function RegistrationPage() {
       <section className="max-w-6xl mx-auto px-6 pt-8 pb-16">
         <ProgressSteps step={step} />
         <h1 className="text-3xl font-bold mb-2 text-gray-900">
-          Conference Registration
+          {governmentOfficial
+            ? "Kenyan Government Officials Registration"
+            : "Conference Registration"}
         </h1>
         <p className="text-gray-600 mb-10">
-          Please complete the form below to register for the conference.
+          {governmentOfficial
+            ? "This link is only for Kenyan government officials."
+            : "Please complete the form below to register for the conference."}
         </p>
+
+        {governmentOfficial && (
+          <div className="mb-8 bg-orange-50 border border-orange-200 p-5 rounded-xl">
+            <h3 className="font-semibold text-orange-800">
+              Kenyan government officials only
+            </h3>
+            <p className="text-sm text-orange-900 mt-1">
+              This registration link is only for use by Kenyan government
+              officials. The special fee is{" "}
+              <strong>KES {KE_GOVERNMENT_OFFICIAL_FEE_KES.toLocaleString("en-KE")}</strong>.
+              Do not share this link outside the Government of Kenya and county governments.
+            </p>
+          </div>
+        )}
 
         {invite && (
           <div className="mb-8 bg-green-50 border border-green-200 p-5 rounded-xl flex items-start gap-3">
@@ -781,7 +805,7 @@ export default function RegistrationPage() {
                 : "Choose your registration phase and participant type."
             }
           >
-            {!invite && (
+            {!invite && !governmentOfficial && (
             <div className="md:col-span-2 bg-orange-50 border border-orange-200 p-6 rounded-xl shadow-sm flex flex-col md:flex-row items-start gap-4">
               <div className="flex-shrink-0">
                 <Info className="text-orange-600 w-8 h-8" />
@@ -822,7 +846,7 @@ export default function RegistrationPage() {
             </div>
             )}
 
-            {!invite && promoActive && registrationOpen && (
+            {!invite && !governmentOfficial && promoActive && registrationOpen && (
               <div className="md:col-span-2 bg-green-50 border border-green-200 p-5 rounded-xl flex flex-col sm:flex-row gap-4 items-start">
                 <div className="flex-shrink-0">
                   <Gift className="text-green-600 w-8 h-8" />
@@ -857,7 +881,7 @@ export default function RegistrationPage() {
               </div>
             )}
 
-            {!invite && registrationOpen && (
+            {!invite && !governmentOfficial && registrationOpen && (
             <FormSelect
               label="Registration Phase*"
               name="phase"
@@ -879,7 +903,7 @@ export default function RegistrationPage() {
             />
             )}
 
-            {!invite && registrationOpen && (
+            {!invite && !governmentOfficial && registrationOpen && (
             <FormSelect
               label="Registration Type*"
               name="type"
@@ -893,6 +917,21 @@ export default function RegistrationPage() {
               ]}
               error={errors.type}
             />
+            )}
+
+            {governmentOfficial && (
+              <div className="md:col-span-2 p-4 rounded-lg text-center bg-orange-50 border border-orange-200">
+                <p className="text-sm text-gray-600">
+                  Kenyan government official fee
+                </p>
+                <p className="text-2xl font-bold text-orange-600">
+                  KES {KE_GOVERNMENT_OFFICIAL_FEE_KES.toLocaleString("en-KE")}
+                </p>
+                <p className="text-xs text-gray-600 mt-2">
+                  This link is only for Kenyan government officials. Accommodation
+                  is not included.
+                </p>
+              </div>
             )}
 
             {fee && (
@@ -937,6 +976,7 @@ export default function RegistrationPage() {
               </div>
             )}
 
+            {!governmentOfficial && (
             <div className="md:col-span-2" data-field="invoiceCurrency">
               <p className="text-sm font-medium text-gray-900 mb-3">
                 Registration currency*
@@ -945,7 +985,9 @@ export default function RegistrationPage() {
                 {[
                   { value: "USD", label: "Register in USD" },
                   { value: "KES", label: "Register in Kenyan Shillings" },
-                ].map((option) => {
+                ]
+                  .filter((option) => !governmentOfficial || option.value === "KES")
+                  .map((option) => {
                   const selected = form.invoiceCurrency === option.value;
                   return (
                     <button
@@ -985,11 +1027,12 @@ export default function RegistrationPage() {
                 </p>
               )}
             </div>
+            )}
 
             <div className="md:col-span-2">
               <button
                 type="submit"
-                disabled={submit || (!invite && !registrationOpen)}
+                disabled={submit || (!invite && !governmentOfficial && !registrationOpen)}
                 className="w-full bg-orange-600 text-white py-3 rounded-lg font-medium hover:bg-orange-700 transition flex justify-center items-center gap-2 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
               >
                 {submit ? (
@@ -997,7 +1040,7 @@ export default function RegistrationPage() {
                     <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                     Submitting...
                   </>
-                ) : !invite && !registrationOpen ? (
+                ) : !invite && !governmentOfficial && !registrationOpen ? (
                   "Registration Closed"
                 ) : (
                   "Submit Registration"

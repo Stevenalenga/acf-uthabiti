@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { transporter } from "@/lib/mailer";
 import { paymentFailedTemplate } from "@/lib/emailTemplate";
 import { sendPaymentConfirmationEmail } from "@/lib/sendPaymentConfirmationEmail";
+import { settleDinnerPayment } from "@/lib/dinner/settleDinnerPayment";
+import { settleLivestreamPayment } from "@/lib/livestream/settleLivestreamPayment";
+import { isDinnerPaymentReference } from "@/lib/dinner";
 
 export async function POST(req) {
 
@@ -25,6 +28,32 @@ export async function POST(req) {
 
   if (!reference) {
     return new Response("No reference", { status: 200 });
+  }
+
+  if (isDinnerPaymentReference(reference)) {
+    const outcome =
+      event.event === "charge.success"
+        ? "success"
+        : event.event === "charge.failed"
+          ? "failed"
+          : null;
+    if (outcome) {
+      await settleDinnerPayment(reference, outcome);
+    }
+    return new Response("OK", { status: 200 });
+  }
+
+  if (String(reference).startsWith("LIVE-")) {
+    const outcome =
+      event.event === "charge.success"
+        ? "success"
+        : event.event === "charge.failed"
+          ? "failed"
+          : null;
+    if (outcome) {
+      await settleLivestreamPayment(reference, outcome);
+    }
+    return new Response("OK", { status: 200 });
   }
 
   const payment = await prisma.payment_tbl.findFirst({
