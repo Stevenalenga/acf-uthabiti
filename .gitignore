@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+/public/receipts/
 
 # debug
 npm-debug.log*
@@ -45,3 +46,9 @@ next-env.d.ts
 /data/
 /.runtime/
 /var/
+
+# one-time operational scripts
+/scripts/create-ecde-invoices.js
+/scripts/import-mombasa-gallery-from-drive.cjs
+/scripts/send-field-visit-reminder.js
+/scripts/send-tamarind-dinner-reminder.js
