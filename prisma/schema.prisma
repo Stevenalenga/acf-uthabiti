@@ -281,3 +281,21 @@ model participant_logbook_tbl {
   @@index([full_name])
   @@index([status])
 }
+model blog_comment_tbl {
+  comment_id BigInt   @id @default(autoincrement())
+  blog_slug  String   @db.VarChar(120)
+  author     String   @db.VarChar(80)
+  message    String   @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([blog_slug, createdAt])
+}
+
+model blog_like_tbl {
+  like_id    BigInt   @id @default(autoincrement())
+  blog_slug  String   @db.VarChar(120)
+  visitor_id String   @db.VarChar(64)
+  createdAt  DateTime @default(now())
+
+  @@unique([blog_slug, visitor_id])
+}

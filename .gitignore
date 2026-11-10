@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 /public/receipts/
+/public/mombasa vids/*.mp4
 
 # debug
 npm-debug.log*

@@ -3,17 +3,41 @@
 import { Camera, Download, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const ACCESS_CODE = "9076";
+const MOMBASA_VIDEOS = [
+  {
+    title: "Africa Child Forum — Day Two",
+    fileName: "AFRICA CHILD FORUM DAY TWO.mp4",
+  },
+  {
+    title: "Uthabiti Forum — Day One, Morning Session",
+    fileName: "UTHABITI FORUM DAY ONE MORNING SESSION.mp4",
+  },
+  {
+    title: "ACF Deputy Governors Meeting",
+    fileName: "#ACF DEPUTY GOVERNORS MEETING MOMBASA.mp4",
+  },
+  {
+    title: "Africa Child Forum — Day Three",
+    fileName: "AFRICA CHILD FORUM DAY THREE.mp4",
+  },
+  {
+    title: "Mombasa Event Video — 23 October, 1:19:13 PM",
+    fileName: "WhatsApp Video 2026-10-23 at 1.19.13 PM.mp4",
+  },
+  {
+    title: "Mombasa Event Video — 23 October, 1:19:39 PM",
+    fileName: "WhatsApp Video 2026-10-23 at 1.19.39 PM.mp4",
+  },
+  {
+    title: "Uthabiti Forum — Day One, Afternoon Session",
+    fileName: "UTHABITI FORUM DAY ONE AFTERNOON SESSION.mp4",
+  },
+];
 
 export default function MombasaGalleryPage() {
   const PAGE_SIZE = 18;
 
-  const [accessCode, setAccessCode] = useState("");
-  const [accessGranted, setAccessGranted] = useState(false);
   const [items, setItems] = useState([]);
-  const [error, setError] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [guidelinesOpen, setGuidelinesOpen] = useState(false);
   const [agreementChecked, setAgreementChecked] = useState(false);
@@ -35,10 +59,8 @@ export default function MombasaGalleryPage() {
   }
 
   useEffect(() => {
-    if (accessGranted) {
-      loadGallery();
-    }
-  }, [accessGranted]);
+    loadGallery();
+  }, []);
 
   useEffect(() => {
     if (!guidelinesOpen) return undefined;
@@ -68,52 +90,6 @@ export default function MombasaGalleryPage() {
       document.body.style.overflow = originalOverflow;
     };
   }, [guidelinesOpen]);
-
-  const handleAccess = (event) => {
-    event.preventDefault();
-    if (accessCode.trim() === ACCESS_CODE) {
-      setAccessGranted(true);
-      setError("");
-      return;
-    }
-    setError("Invalid access code. Please enter the correct number.");
-  };
-
-  const handleUpload = async (event) => {
-    event.preventDefault();
-    if (!selectedFiles.length) {
-      setError("Select one or more JPG, JPEG, PNG, GIF, WEBP, BMP, or ZIP files.");
-      return;
-    }
-
-    setUploading(true);
-    setError("");
-
-    try {
-      const formData = new FormData();
-      formData.append("code", ACCESS_CODE);
-      formData.append("uploadedBy", "mombasa-gallery-user");
-      selectedFiles.forEach((file) => formData.append("files", file));
-
-      const res = await fetch("/api/acf-mombasa-2026", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Could not upload files.");
-      }
-
-      setSelectedFiles([]);
-      event.target.reset();
-      await loadGallery();
-    } catch (uploadError) {
-      setError(uploadError.message || "Upload failed.");
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const queueDownload = (downloadRequest) => {
     if (downloadingKey) return;
@@ -213,48 +189,6 @@ export default function MombasaGalleryPage() {
     }
   };
 
-  if (!accessGranted) {
-    return (
-      <main className="min-h-screen bg-[#fff7f4] px-6 py-20 text-gray-900">
-        <div className="mx-auto max-w-xl rounded-3xl border border-orange-200 bg-white p-10 shadow-lg">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#E5553C]">
-            ACF Mombasa 2026
-          </p>
-          <h1 className="mt-4 text-3xl font-bold">Photo Access</h1>
-          <p className="mt-3 text-gray-600">
-            Enter the access code to upload and review the event photos for ACF Mombasa 2026.
-          </p>
-
-          <form onSubmit={handleAccess} className="mt-8 space-y-5">
-            <label className="block text-sm font-medium text-gray-700">
-              Access code
-              <input
-                type="password"
-                value={accessCode}
-                onChange={(event) => setAccessCode(event.target.value)}
-                className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-lg outline-none ring-0 focus:border-[#E5553C]"
-                placeholder="Enter code"
-              />
-            </label>
-
-            {error ? (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {error}
-              </p>
-            ) : null}
-
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-[#E5553C] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#cc4a35]"
-            >
-              Unlock gallery
-            </button>
-          </form>
-        </div>
-      </main>
-    );
-  }
-
   const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const safePage = Math.min(Math.max(1, currentPage), totalPages);
   const pageStart = (safePage - 1) * PAGE_SIZE;
@@ -269,54 +203,9 @@ export default function MombasaGalleryPage() {
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#E5553C]">
                 ACF Mombasa 2026
               </p>
-              <h1 className="mt-2 text-3xl font-bold md:text-4xl">Photo gallery</h1>
+              <h1 className="mt-2 text-3xl font-bold md:text-4xl">Photo &amp; Video Gallery</h1>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setAccessGranted(false)}
-              className="inline-flex rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
-            >
-              Sign out
-            </button>
           </div>
-        </section>
-
-        <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-orange-100 sm:p-8">
-          <h2 className="text-2xl font-bold">Upload photos</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Upload JPG, JPEG, PNG, GIF, WEBP, BMP, or ZIP files. ZIP uploads will be extracted automatically.
-          </p>
-
-          <form onSubmit={handleUpload} className="mt-6 space-y-5">
-            <input
-              type="file"
-              accept=".zip,.jpg,.jpeg,.png,.gif,.webp,.bmp"
-              multiple
-              onChange={(event) => setSelectedFiles(Array.from(event.target.files || []))}
-              className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-xl file:border-0 file:bg-[#E5553C] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
-            />
-
-            {selectedFiles.length ? (
-              <div className="rounded-xl border border-dashed border-orange-200 bg-orange-50 px-4 py-3 text-sm text-gray-700">
-                {selectedFiles.length} file(s) selected.
-              </div>
-            ) : null}
-
-            {error ? (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {error}
-              </p>
-            ) : null}
-
-            <button
-              type="submit"
-              disabled={uploading}
-              className="rounded-xl bg-[#E5553C] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#cc4a35] disabled:cursor-not-allowed disabled:bg-orange-300"
-            >
-              {uploading ? "Uploading..." : "Upload files"}
-            </button>
-          </form>
         </section>
 
         <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-orange-100 sm:p-8">
@@ -426,6 +315,46 @@ export default function MombasaGalleryPage() {
               No photos uploaded yet.
             </div>
           )}
+        </section>
+
+        <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-orange-100 sm:p-8">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold">Event videos</h2>
+              <p className="mt-2 text-sm text-gray-600">
+                Watch sessions and highlights from ACF Mombasa 2026.
+              </p>
+            </div>
+            <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#E5553C]">
+              {MOMBASA_VIDEOS.length} video(s)
+            </span>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {MOMBASA_VIDEOS.map((video) => (
+              <article
+                key={video.fileName}
+                className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50"
+              >
+                <video
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="aspect-video w-full bg-black"
+                  aria-label={video.title}
+                >
+                  <source
+                    src={`/mombasa%20vids/${encodeURIComponent(video.fileName)}`}
+                    type="video/mp4"
+                  />
+                  Your browser does not support HTML video.
+                </video>
+                <div className="p-4">
+                  <h3 className="text-sm font-semibold text-gray-900">{video.title}</h3>
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
       </div>
 

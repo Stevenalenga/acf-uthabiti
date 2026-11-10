@@ -128,13 +128,10 @@ export default function ACFUganda2027Page() {
               className="h-32 w-32 rounded-full border-2 border-white/30 bg-white/10 p-2 shadow-lg sm:h-36 sm:w-36"
             />
             <img
-              src="/images/acf-logo.png"
-              alt="Africa Childcare Forum logo"
-              className="h-24 w-auto object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.25)] sm:h-32"
+              src="/uganda2027/acf-uganda-logo-white.png"
+              alt="Africa Childcare Forum Uganda 2027 logo"
+              className="h-28 w-auto object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.25)] sm:h-36"
             />
-            <p className="inline-block px-4 py-2 text-sm font-semibold tracking-wide uppercase text-[#F7D07E] bg-white/10 rounded-full border border-white/20 sm:text-base">
-              ACFUGANDA2027
-            </p>
           </div>
 
           <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-tight max-w-4xl">

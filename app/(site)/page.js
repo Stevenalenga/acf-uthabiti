@@ -5,7 +5,6 @@ import { useToast } from "@/components/ui/ToastProvider";
 import { ArrowRight, MapPin, Calendar, Users, Landmark, Lightbulb, Globe, BookOpen, HeartHandshake, CheckCircle, 
 Mic, Presentation, Handshake, GraduationCap, MessageCircle, Briefcase, HandCoins, Network, FileText, MonitorSmartphone, 
 HandHelping, FileSearch, Mail, Linkedin, Twitter, Instagram, Hash } from "lucide-react";
-import Countdown from "@/components/ui/CountDown";
 import StatCounter from "@/components/ui/StatCounter";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -119,10 +118,6 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <div className="mt-8">
-                <Countdown variant="hero" />
-              </div>
-
               <div className="mt-8 flex flex-wrap gap-4">
                 <a
                   href="/event-register"
@@ -179,12 +174,6 @@ export default function HomePage() {
                 alt="Africa Childcare Forum Mombasa 2026 – Uniting for Care"
                 className="rounded-2xl shadow-2xl w-full max-w-md object-cover"
               />
-              <div className="bg-white shadow-xl rounded-2xl px-6 py-5 w-full max-w-sm">
-                <p className="text-center text-sm text-gray-500 font-semibold mb-3">
-                  Event Starts In
-                </p>
-                <Countdown />
-              </div>
             </div>
           </div>
         </div>

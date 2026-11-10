@@ -18,10 +18,7 @@ import {
   Users,
   UsersRound,
   Hotel,
-  MapPin,
 } from "lucide-react";
-import Countdown from "@/components/ui/CountDown";
-import { FIELD_VISIT } from "@/lib/fieldVisit";
 
 export default function Header() {
   const pathname = usePathname();
@@ -92,12 +89,6 @@ export default function Header() {
     href: "/accommodation",
     icon: Hotel,
     desc: "Hotels near PrideInn Flamingo Beach Resort & Spa",
-  },
-  {
-    name: "Field Visits",
-    href: "/field-visits",
-    icon: MapPin,
-    desc: "Sign up to visit childcare centres in Mombasa",
   },
   {
     name: "Sponsors",
@@ -219,36 +210,14 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/tamarind-dinner"
+              href="/blog"
               className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/tamarind-dinner"
+                pathname.startsWith("/blog")
                   ? "text-[#E5553C]"
                   : "text-gray-700 hover:text-[#E5553C]"
               }`}
             >
-              Tamarind Dinner
-            </Link>
-
-            <Link
-              href="/tamarind-dinner"
-              className={`hidden xl:inline-flex shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/tamarind-dinner"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              Tamarind Dinner
-            </Link>
-
-            <Link
-              href="/field-visits"
-              className={`hidden xl:inline-flex shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/field-visits"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              Field Visits
+              Blog
             </Link>
 
             <Link
@@ -383,27 +352,19 @@ export default function Header() {
               </Link>
 
               <Link
+                href="/blog"
+                onClick={() => setOpen(false)}
+                className="block font-semibold text-gray-700"
+              >
+                Blog
+              </Link>
+
+              <Link
                 href="/accommodation"
                 onClick={() => setOpen(false)}
                 className="block font-semibold text-gray-700"
               >
                 Accommodation
-              </Link>
-
-              <Link
-                href="/tamarind-dinner"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                Tamarind Dinner
-              </Link>
-
-              <Link
-                href="/field-visits"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                Field Visits
               </Link>
 
               <Link
@@ -456,26 +417,10 @@ export default function Header() {
             </div>
           </div>
         )}
-
-        <div className="bg-[#E5553C] border-t border-white/10">
-          <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-2 sm:py-2.5">
-            <div className="flex flex-col items-center justify-center gap-1.5 sm:gap-2 text-center">
-              <Countdown variant="banner" />
-              <a
-                href={FIELD_VISIT.formUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/50 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white transition hover:bg-white/20 sm:text-xs"
-              >
-                Field visit registration is still open: {FIELD_VISIT.formUrl}
-              </a>
-            </div>
-          </div>
-        </div>
       </header>
 
-      {/* Offset for fixed header + countdown strip */}
-      <div className="h-[8.5rem] sm:h-[9rem]" aria-hidden />
+      {/* Offset for fixed header */}
+      <div className="h-[5.5rem] sm:h-[6rem]" aria-hidden />
 
       {/* SCROLL TO TOP */}
       {showTop && (
