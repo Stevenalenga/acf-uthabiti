@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import {
   Menu,
@@ -10,23 +10,23 @@ import {
   ArrowUp,
   ChevronDown,
   Calendar,
-  Handshake,
   Presentation,
   LayoutGrid,
   Globe,
-  Mail,
   Users,
-  UsersRound,
-  Hotel,
+  Target,
+  HandCoins,
 } from "lucide-react";
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showTop, setShowTop] = useState(false);
+  const [forumDetailsOpen, setForumDetailsOpen] = useState(false);
+  const [previousConferencesOpen, setPreviousConferencesOpen] = useState(false);
+  const isMombasaArchive = pathname.startsWith("/acf-mombasa-2026");
 
   useEffect(() => {
     const onScroll = () => {
@@ -45,70 +45,103 @@ export default function Header() {
     };
   }, []);
 
-  const handleNavClick = (href) => {
+  const handleNavClick = () => {
     setOpen(false);
-
-    if (href.startsWith("#") && pathname !== "/") {
-      router.push(`/${href}`);
-    }
+    setForumDetailsOpen(false);
+    setPreviousConferencesOpen(false);
   };
+  const getSectionHref = (href) =>
+    `${isMombasaArchive ? "/acf-mombasa-2026" : "/"}${href}`;
 
-  const sections = [
+  const ugandaSections = [
   {
-    name: "Steering Committee",
-    href: "/steering-committee",
-    icon: UsersRound,
-    desc: "Meet the steering committee for ACFMombasa2026",
+    name: "Registration & Fees",
+    href: "#pricing",
+    icon: HandCoins,
+    desc: "Early Bird dates and registration fees",
   },
   {
-    name: "Why Attend",
-    href: "#why-attend",
+    name: "Background",
+    href: "#background",
     icon: Globe,
-    desc: "Why the forum matters for Africa’s childcare future",
+    desc: "Why childcare financing matters",
   },
   {
-    name: "Participation",
-    href: "#participation",
-    icon: Users,
-    desc: "Ways individuals and organizations can participate",
+    name: "Objectives",
+    href: "#objectives",
+    icon: Target,
+    desc: "The goals of the Uganda 2027 forum",
   },
   {
-    name: "Who Should Attend",
-    href: "#who-should-attend",
-    icon: Users,
-    desc: "Stakeholders and leaders invited to the forum",
-  },
-  {
-    name: "Pre-Conference",
-    href: "#preconference",
-    icon: Calendar,
-    desc: "Preparatory dialogues and engagements",
-  },
-  {
-    name: "Accommodation",
-    href: "/accommodation",
-    icon: Hotel,
-    desc: "Hotels near PrideInn Flamingo Beach Resort & Spa",
-  },
-  {
-    name: "Sponsors",
-    href: "#sponsors",
-    icon: Handshake,
-    desc: "Partners supporting the forum",
-  },
-  {
-    name: "Sessions",
-    href: "#sessions",
+    name: "Themes",
+    href: "#themes",
     icon: Presentation,
-    desc: "Forum discussions and panels",
+    desc: "Eight investment themes for childcare financing",
   },
   {
-    name: "Exhibitions",
-    href: "#exhibitions",
-    icon: LayoutGrid,
-    desc: "Innovation and knowledge showcases",
+    name: "Participants",
+    href: "#audience",
+    icon: Users,
+    desc: "Who the forum brings together",
+  },
+  {
+    name: "Expected outcomes",
+    href: "#outcomes",
+    icon: Target,
+    desc: "What the forum aims to achieve",
+  },
+  {
+    name: "Format",
+    href: "#format",
+    icon: Calendar,
+    desc: "How the five-day forum will work",
   },
 ];
+  const mombasaSections = [
+    {
+      name: "Full event overview",
+      href: "/acf-mombasa-2026",
+      icon: Globe,
+      desc: "Event background, highlights and key information",
+    },
+    {
+      name: "Forum sessions",
+      href: "#sessions",
+      icon: Presentation,
+      desc: "Explore session formats and topics",
+    },
+    {
+      name: "Why attend",
+      href: "#why-attend",
+      icon: Target,
+      desc: "The forum’s purpose and value",
+    },
+    {
+      name: "Participation",
+      href: "#participation",
+      icon: Users,
+      desc: "Ways to take part in the forum",
+    },
+    {
+      name: "Who should attend",
+      href: "#who-should-attend",
+      icon: Users,
+      desc: "Stakeholders and leaders at the forum",
+    },
+    {
+      name: "Pre-conference",
+      href: "#preconference",
+      icon: Calendar,
+      desc: "Preparatory dialogues and engagements",
+    },
+    {
+      name: "Exhibitions",
+      href: "#exhibitions",
+      icon: LayoutGrid,
+      desc: "Innovation and knowledge showcases",
+    },
+  ];
+  const sections = isMombasaArchive ? mombasaSections : ugandaSections;
 
   return (
     <>
@@ -124,18 +157,19 @@ export default function Header() {
           }`}
         >
           {/* LOGO */}
-          <Link href="/" className="flex shrink-0 items-center">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center rounded-lg bg-[#124126] px-2 py-1.5 sm:px-3"
+          >
             <img
-              src="/images/partners/acf.png"
-              alt="Africa Childcare Forum"
-              className={`w-auto object-contain transition-all duration-300 ${
-                scrolled ? "h-12" : "h-14"
-              }`}
+              src="/uganda2027/acf-uganda-logo-white.png"
+              alt="Africa Childcare Forum Uganda 2027"
+              className="h-10 w-auto max-w-[145px] object-contain transition-all duration-300 sm:h-12"
             />
           </Link>
 
           {/* DESKTOP NAV — same row as logo and Register */}
-          <nav className="hidden md:flex min-w-0 flex-1 items-center justify-between gap-x-0.5 lg:gap-x-1 overflow-hidden text-[12.5px] lg:text-[14px] leading-none">
+          <nav className="hidden md:flex min-w-0 flex-1 items-center justify-between gap-x-0.5 overflow-visible text-[11px] lg:gap-x-1 lg:text-[14px] leading-none">
             <Link
               href="/"
               className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
@@ -149,22 +183,34 @@ export default function Header() {
 
             {/* MEGA DROPDOWN */}
             <div className="relative group shrink-0">
-              <button className="flex items-center justify-center gap-1 px-1 lg:px-2 py-2 font-semibold whitespace-nowrap text-gray-700 hover:text-[#E5553C]">
+              <button
+                type="button"
+                aria-expanded={forumDetailsOpen}
+                onClick={() => setForumDetailsOpen((value) => !value)}
+                className="flex items-center justify-center gap-1 px-1 lg:px-2 py-2 font-semibold whitespace-nowrap text-gray-700 hover:text-[#E5553C]"
+              >
                 Forum Details
                 <ChevronDown size={16} />
               </button>
 
-              <div className="absolute left-1/2 top-full z-20 w-[min(720px,70vw)] -translate-x-1/2 pt-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200">
+              <div className={`absolute left-1/2 top-full z-20 w-[min(720px,70vw)] -translate-x-1/2 pt-2 transition-all duration-200 ${
+                forumDetailsOpen
+                  ? "visible opacity-100"
+                  : "invisible pointer-events-none opacity-0"
+              }`}>
                 <div className="bg-white shadow-xl rounded-2xl p-6">
                   <div className="grid grid-cols-2 gap-4">
                     {sections.map((item, i) => {
                       const Icon = item.icon;
+                      const href = item.href.startsWith("#")
+                        ? getSectionHref(item.href)
+                        : item.href;
 
                       return (
                         <Link
                           key={i}
-                          href={item.href}
-                          onClick={() => handleNavClick(item.href)}
+                          href={href}
+                          onClick={handleNavClick}
                           className="flex gap-4 p-3 rounded-lg hover:bg-gray-50 transition"
                         >
                           <div className="bg-[#FFF4F0] p-3 rounded-lg">
@@ -188,28 +234,6 @@ export default function Header() {
             </div>
 
             <Link
-              href="/speakers"
-              className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/speakers"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              Speakers
-            </Link>
-
-            <Link
-              href="/programme"
-              className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/programme"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              Programme
-            </Link>
-
-            <Link
               href="/blog"
               className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
                 pathname.startsWith("/blog")
@@ -220,44 +244,43 @@ export default function Header() {
               Blog
             </Link>
 
-            <Link
-              href="/media"
-              className={`hidden xl:inline-flex shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/media"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              Media
-            </Link>
-
-            <Link
-              href="/kigali"
-              className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/kigali" ||
-                pathname === "/ACFKigali2025" ||
-                pathname === "/acfkigali2025" ||
-                pathname === "/event"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              ACFKigali2025
-            </Link>
-
-            <Link
-              href="/acfuganda2027"
-              className={`shrink-0 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
-                pathname === "/acfuganda2027" ||
-                pathname === "/uganda" ||
-                pathname === "/ACFUganda2027" ||
-                pathname === "/uganda2027"
-                  ? "text-[#E5553C]"
-                  : "text-gray-700 hover:text-[#E5553C]"
-              }`}
-            >
-              ACFUganda2027
-            </Link>
+            <div className="relative group shrink-0">
+              <button
+                type="button"
+                aria-expanded={previousConferencesOpen}
+                onClick={() => setPreviousConferencesOpen((value) => !value)}
+                className={`flex items-center gap-1 px-0.5 lg:px-1.5 py-2 font-semibold whitespace-nowrap ${
+                  isMombasaArchive || pathname === "/kigali" || pathname === "/ACFKigali2025" || pathname === "/event"
+                    ? "text-[#E5553C]"
+                    : "text-gray-700 hover:text-[#E5553C]"
+                }`}
+              >
+                Previous Conferences
+                <ChevronDown size={16} />
+              </button>
+              <div className={`absolute left-0 top-full z-20 min-w-56 pt-2 transition-all duration-200 ${
+                previousConferencesOpen
+                  ? "visible opacity-100"
+                  : "invisible pointer-events-none opacity-0"
+              }`}>
+                <div className="rounded-xl bg-white p-2 shadow-xl ring-1 ring-gray-100">
+                  <Link
+                    href="/ACFKigali2025"
+                    onClick={handleNavClick}
+                    className="block rounded-lg px-4 py-3 font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#E5553C]"
+                  >
+                    ACF Kigali 2025
+                  </Link>
+                  <Link
+                    href="/acf-mombasa-2026"
+                    onClick={handleNavClick}
+                    className="block rounded-lg px-4 py-3 font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#E5553C]"
+                  >
+                    ACF Mombasa 2026
+                  </Link>
+                </div>
+              </div>
+            </div>
 
             <Link
               href="/contact"
@@ -287,7 +310,7 @@ export default function Header() {
               href="/event-register"
               className="whitespace-nowrap bg-[#E5553C] text-white px-3 lg:px-4 py-2 rounded-lg text-[12.5px] lg:text-[14px] font-semibold shadow hover:bg-[#cc4a35] transition"
             >
-              Register
+              Register 2027
             </Link>
             <button
               className="md:hidden text-gray-700"
@@ -312,19 +335,28 @@ export default function Header() {
               </Link>
 
               <div>
-                <p className="text-sm font-semibold text-gray-500 mb-3">
+                <button
+                  type="button"
+                  aria-expanded={forumDetailsOpen}
+                  onClick={() => setForumDetailsOpen((value) => !value)}
+                  className="mb-3 flex w-full items-center justify-between text-left text-sm font-semibold text-gray-500"
+                >
                   Forum Details
-                </p>
+                  <ChevronDown size={16} />
+                </button>
 
-                <div className="space-y-3">
+                {forumDetailsOpen && <div className="space-y-3">
                   {sections.map((item, i) => {
                     const Icon = item.icon;
+                    const href = item.href.startsWith("#")
+                      ? getSectionHref(item.href)
+                      : item.href;
 
                     return (
                       <Link
                         key={i}
-                        href={item.href}
-                        onClick={() => handleNavClick(item.href)}
+                        href={href}
+                        onClick={handleNavClick}
                         className="flex items-center gap-3 text-gray-700"
                       >
                         <Icon size={18} className="text-[#E5553C]" />
@@ -332,24 +364,8 @@ export default function Header() {
                       </Link>
                     );
                   })}
-                </div>
+                </div>}
               </div>
-
-              <Link
-                href="/speakers"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                Speakers
-              </Link>
-
-              <Link
-                href="/programme"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                Programme
-              </Link>
 
               <Link
                 href="/blog"
@@ -359,37 +375,35 @@ export default function Header() {
                 Blog
               </Link>
 
-              <Link
-                href="/accommodation"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                Accommodation
-              </Link>
-
-              <Link
-                href="/media"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                Media & Resources
-              </Link>
-
-              <Link
-                href="/kigali"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                ACFKigali2025
-              </Link>
-
-              <Link
-                href="/acfuganda2027"
-                onClick={() => setOpen(false)}
-                className="block font-semibold text-gray-700"
-              >
-                ACFUganda2027
-              </Link>
+              <div>
+                <button
+                  type="button"
+                  aria-expanded={previousConferencesOpen}
+                  onClick={() => setPreviousConferencesOpen((value) => !value)}
+                  className="mb-3 flex w-full items-center justify-between text-left font-semibold text-gray-700"
+                >
+                  Previous Conferences
+                  <ChevronDown size={16} />
+                </button>
+                {previousConferencesOpen && (
+                  <div className="space-y-3 pl-3">
+                    <Link
+                      href="/ACFKigali2025"
+                      onClick={handleNavClick}
+                      className="block font-semibold text-gray-600"
+                    >
+                      ACF Kigali 2025
+                    </Link>
+                    <Link
+                      href="/acf-mombasa-2026"
+                      onClick={handleNavClick}
+                      className="block font-semibold text-gray-600"
+                    >
+                      ACF Mombasa 2026
+                    </Link>
+                  </div>
+                )}
+              </div>
 
               <Link
                 href="/contact"
@@ -412,7 +426,7 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="block text-center bg-[#E5553C] text-white py-3 rounded-lg font-semibold"
               >
-                Register
+                Register for Uganda 2027
               </Link>
             </div>
           </div>

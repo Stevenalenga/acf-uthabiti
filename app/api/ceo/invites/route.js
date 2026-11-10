@@ -27,7 +27,7 @@ async function sendInviteEmail(invite) {
       from: `"Uthabiti Africa – CEO's Office" <${process.env.EMAIL_USER}>`,
       to: invite.email,
       replyTo: CEO_EMAIL,
-      subject: "A Special Invitation to ACF Mombasa 2026",
+      subject: "A Special Invitation to ACF Uganda 2027",
       html: specialInviteTemplate({
         name: invite.invited_name,
         amount: invite.amount,

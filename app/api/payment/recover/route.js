@@ -137,7 +137,7 @@ async function findByInvoice(invoiceNumber) {
     return Response.json(
       {
         error:
-          "Invoice not found. Enter the invoice number exactly as shown (for example ACF2026/086/2026).",
+          "Invoice not found. Enter the invoice number exactly as shown (for example ACF2027/001/2026).",
       },
       { status: 404 }
     );

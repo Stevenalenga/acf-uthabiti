@@ -548,7 +548,7 @@ export default function RegistrationPage({ governmentOfficial = false }) {
         <p className="text-gray-600 mb-10">
           {governmentOfficial
             ? "This link is only for Kenyan government officials."
-            : "Please complete the form below to register for the conference."}
+            : "Register for the Africa Childcare Forum Uganda 2027, taking place May 17–21, 2027 at Speke Resort Munyonyo in Kampala, Uganda."}
         </p>
 
         {governmentOfficial && (

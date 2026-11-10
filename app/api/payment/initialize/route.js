@@ -83,7 +83,7 @@ export async function POST(req) {
               {
                 display_name: "Conference",
                 variable_name: "conference",
-                value: "ACF Mombasa 2026",
+                value: "ACF Uganda 2027",
               },
               {
                 display_name: "Participant",

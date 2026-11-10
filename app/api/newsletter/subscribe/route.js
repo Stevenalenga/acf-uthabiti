@@ -32,9 +32,9 @@ export async function POST(req) {
     const unsubscribeUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/unsubscribe?token=${subscriber.unsubscribeToken}`;
 
     await transporter.sendMail({
-      from: `"ACF Mombasa 2026" <${process.env.EMAIL_USER}>`,
+      from: `"ACF Uganda 2027" <${process.env.EMAIL_USER}>`,
       to: normalizedEmail,
-      subject: "You're subscribed to ACFMombasa2026 Updates",
+      subject: "You're subscribed to ACF Uganda 2027 Updates",
       html: newsletterTemplate({
         unsubscribeUrl,
       }),

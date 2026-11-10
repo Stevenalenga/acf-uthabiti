@@ -78,7 +78,7 @@ export async function POST(req) {
       return Response.json(
         {
           error:
-            "Invoice not found. Please enter the invoice number exactly as shown on your invoice (for example ACF2026/086/2026) and try again.",
+            "Invoice not found. Please enter the invoice number exactly as shown on your invoice (for example ACF2027/001/2026) and try again.",
         },
         { status: 404 }
       );
